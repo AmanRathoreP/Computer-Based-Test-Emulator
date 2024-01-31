@@ -16,7 +16,31 @@ mainFrame::mainFrame(const wxString& title) : wxFrame(nullptr, wxID_ANY, title) 
     menu_bar->Append(menu_help, "&Help");
 
     SetMenuBar(menu_bar);
-    
+
+    // Create an HTML view
+    this->test_info_display = new wxHtmlWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize);
+    this->start_test_button = new wxButton(this, wxID_ANY, "Start Test");
+
+    wxFont __button_font = this->start_test_button->GetFont();
+    __button_font.SetPointSize(19); // Change the desired font size
+    this->start_test_button->SetFont(__button_font);
+
+    this->start_test_button->Enable(false);
+
+    wxBoxSizer *__v_box_sizer = new wxBoxSizer(wxVERTICAL);
+    __v_box_sizer->Add(this->test_info_display, 7, wxEXPAND | wxALL, 5);
+
+    // Add top and bottom margins to the button
+    __v_box_sizer->AddSpacer(16); // Top margin
+    __v_box_sizer->Add(this->start_test_button, 3, wxEXPAND | wxALIGN_CENTER_HORIZONTAL, 5);
+    __v_box_sizer->AddSpacer(16); // Bottom margin
+
+    // Use HTML and CSS to center-align the text within the wxHtmlWindow
+    // TODO html tags not working
+    this->test_info_display->SetPage("<html><body><h1>Load test via <i>Options > Load Test </i>!</h1><br><h1>Create new test via <i>Options > Create Test </i>!</h1></body></html>");
+
+    SetSizerAndFit(__v_box_sizer);
+
     Bind(wxEVT_MENU, &mainFrame::on_about_clicked, this, wxID_ABOUT);
     Bind(wxEVT_MENU, &mainFrame::on_about_author_clicked, this, ID_about_author);
     Bind(wxEVT_MENU, &mainFrame::on_exit_clicked, this, wxID_EXIT);
@@ -115,7 +139,7 @@ bool mainFrame::check_weather_test_file_is_fit(const wxString &test_file_locatio
     }
     else
     {
-
+        /*
         std::string result;
         result.append("Duration: ").append(std::to_string(test_starting_data.duration)).append(" seconds\n");
         result.append("Test Name: ").append(test_starting_data.test_name).append("\n");
@@ -129,7 +153,48 @@ bool mainFrame::check_weather_test_file_is_fit(const wxString &test_file_locatio
             result.append("   Priority: ").append(std::to_string(test_starting_data.sections[i].priority)).append("\n");
         }
         wxMessageBox(result, "JSON information", wxOK | wxICON_INFORMATION, this);
+        */
+
+        this->start_test_button->Enable(true);
+        this->test_info_display->SetPage(this->generate_html_to_display_test_info());
 
         return true;
     }
+}
+
+std::string mainFrame::generate_html_to_display_test_info()
+{
+    std::stringstream __html_stream;
+
+    // HTML header
+    __html_stream << "<html><head><title>Test Information</title></head><body>";
+
+    // Display test information
+    __html_stream << "<h1>" << this->test_starting_data.test_name << "</h1>";
+    __html_stream << "<p>Duration: " << this->test_starting_data.duration/60 << " minutes</p>";
+    unsigned short int __total_questions = 0;
+    for (unsigned short int i = 0; i < this->test_starting_data.number_of_sections; ++i) {
+        __total_questions += this->test_starting_data.sections[i].number_of_questions;
+    }
+    __html_stream << "<p>Total Questions: " << __total_questions << "</p>";
+
+    __html_stream << "<p>Description: " << this->test_starting_data.test_description << "</p>";
+
+    // Display sections information
+    __html_stream << "<h2>Sections:</h2>";
+    __html_stream << "<ul>";
+    for (unsigned short int i = 0; i < this->test_starting_data.number_of_sections; ++i)
+    {
+        const test_section_info &section = this->test_starting_data.sections[i];
+        __html_stream << "<li>";
+        __html_stream << "<strong>Section Name:</strong> " << section.section_name << "<br>";
+        __html_stream << "<strong>Number of Questions:</strong> " << section.number_of_questions << "<br>";
+        __html_stream << "</li>";
+    }
+    __html_stream << "</ul>";
+
+    // HTML footer
+    __html_stream << "</body></html>";
+
+    return __html_stream.str();
 }

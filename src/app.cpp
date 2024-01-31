@@ -9,7 +9,7 @@ bool myApp::OnInit() {
 	main_frame->Show();
 	main_frame->SetSize(16*50, 9*50);
 	main_frame->SetMinSize(wxSize(16 * 40, 9 * 40));
-	main_frame->SetMaxSize(wxSize(16 * 70, 9 * 70));
+	main_frame->SetMaxSize(wxSize(16 * 55, 9 * 90));
 
 	return true;
 }
