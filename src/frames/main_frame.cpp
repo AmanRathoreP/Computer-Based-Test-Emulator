@@ -46,6 +46,7 @@ mainFrame::mainFrame(const wxString& title) : wxFrame(nullptr, wxID_ANY, title) 
     Bind(wxEVT_MENU, &mainFrame::on_exit_clicked, this, wxID_EXIT);
     Bind(wxEVT_MENU, &mainFrame::on_create_test_clicked, this, ID_create_test);
     Bind(wxEVT_MENU, &mainFrame::on_load_test_clicked, this, ID_load_test);
+    this->start_test_button->Bind(wxEVT_BUTTON, &mainFrame::on_start_test_clicked, this);
 }
 
 void mainFrame::on_exit_clicked(wxCommandEvent& event)
@@ -197,4 +198,11 @@ std::string mainFrame::generate_html_to_display_test_info()
     __html_stream << "</body></html>";
 
     return __html_stream.str();
+}
+
+void mainFrame::on_start_test_clicked(wxCommandEvent& event)
+{
+    this->start_test_button->Enable(false);
+    auto* exam_frame = new examFrame(this->test_starting_data);
+    exam_frame->ShowFullScreen(true);
 }

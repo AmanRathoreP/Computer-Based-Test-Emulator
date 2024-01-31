@@ -13,9 +13,12 @@
   <ItemGroup>
     <ClCompile Include="src\app.cpp" />
     <ClCompile Include="src\frames\main_frame.cpp" />
+    <ClCompile Include="src\frames\exam_frame.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\app.h" />
     <ClInclude Include="src\frames\main_frame.h" />
+    <ClInclude Include="src\frames\exam_frame.h" />
+    <ClInclude Include="src\data structures\test_starting_info.h" />
   </ItemGroup>
 </Project>
