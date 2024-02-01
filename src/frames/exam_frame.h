@@ -1,7 +1,12 @@
 #pragma once
 #include "main_frame.h"
 #include "test_starting_info.h"
+#include "./../panels/questions_panel.h"
+#include "./../panels/questions_navigation_panel.h"
+#include "./../panels/section_info_panel.h"
+#include "./../panels/test_info_panel.h"
 #include <wx/wx.h>
+#include <wx/gbsizer.h>
 #include <string>
 
 class examFrame : public wxFrame

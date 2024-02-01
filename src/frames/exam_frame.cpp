@@ -8,43 +8,44 @@ wxBEGIN_EVENT_TABLE(examFrame, wxFrame)
 {
     SetWindowStyle(GetWindowStyle() | wxFRAME_NO_TASKBAR);
 
-    // Create the main sizer
-    wxBoxSizer *__main_sizer_horizontal = new wxBoxSizer(wxHORIZONTAL);
-    wxBoxSizer *__left_sizer_vertical = new wxBoxSizer(wxVERTICAL);
-    wxBoxSizer *__right_sizer_vertical = new wxBoxSizer(wxVERTICAL);
+    wxGridBagSizer *grid_bag_sizer = new wxGridBagSizer(0, 0);
 
-    wxPanel *test_info_panel = new wxPanel(this, wxID_ANY);
-    test_info_panel->SetBackgroundColour(wxColour(255, 255, 255));
-    wxPanel *questions_navigation_panel = new wxPanel(this, wxID_ANY);
-    questions_navigation_panel->SetBackgroundColour(wxColour(128, 128, 128));
-    wxPanel *question_display_panel = new wxPanel(this, wxID_ANY);
-    question_display_panel->SetBackgroundColour(wxColour(10, 10, 10));
-    wxPanel *questions_info_panel = new wxPanel(this, wxID_ANY);
-    questions_info_panel->SetBackgroundColour(wxColour(214, 47, 171));
+    auto __background_color = wxColor(235, 237, 237);
+
+    // Create panels
+    testInfoPanel *test_info_panel = new testInfoPanel(this);
+    test_info_panel->SetBackgroundColour(__background_color);
+
+    questionsNavigationPanel *questions_navigation_panel = new questionsNavigationPanel(this);
+    questions_navigation_panel->SetBackgroundColour(__background_color);
+
+    questionsPanel *question_display_panel = new questionsPanel(this);
+    question_display_panel->SetBackgroundColour(__background_color);
+
+    sectionInfoPanel *questions_info_panel = new sectionInfoPanel(this);
+    questions_info_panel->SetBackgroundColour(__background_color);
+
+    // Add panels to the grid bag sizer
+    static float __x_strech = 19.48;
+    static float __y_strech = 5.65;
+    grid_bag_sizer->Add(test_info_panel, wxGBPosition(0 * __y_strech, 0 * __x_strech), wxGBSpan(2 * __y_strech, 8 * __x_strech), wxEXPAND | wxALL, 5);
+    grid_bag_sizer->Add(question_display_panel, wxGBPosition(2 * __y_strech, 0 * __x_strech), wxGBSpan(8 * __y_strech, 8 * __x_strech), wxEXPAND | wxALL, 5);
+    grid_bag_sizer->Add(questions_info_panel, wxGBPosition(0 * __y_strech, 8 * __x_strech), wxGBSpan(2 * __y_strech, 2 * __x_strech), wxEXPAND | wxALL, 5);
+    grid_bag_sizer->Add(questions_navigation_panel, wxGBPosition(2 * __y_strech, 8 * __x_strech), wxGBSpan(8 * __y_strech, 2 * __x_strech), wxEXPAND | wxALL, 5);
+
+    SetSizerAndFit(grid_bag_sizer);
 
     // Create and add the timer display
     this->exam_remaining_time = this->test_starting_data.duration;
     this->exam_timer_display = new wxStaticText(test_info_panel, wxID_ANY, formatted_exam_time());
-    this->exam_timer_display->SetFont(wxFontInfo(26).Family(wxFONTFAMILY_SWISS));
+    this->exam_timer_display->SetFont(wxFontInfo(35).Family(wxFONTFAMILY_SWISS));
     this->exam_timer_display->SetForegroundColour(wxColour(0, 0, 0)); // Initial color: black
     exam_timer = new wxTimer(this, this->ID_timer);
     exam_timer->Start(1000);
 
     test_info_panel->SetSizer(new wxBoxSizer(wxVERTICAL));
     test_info_panel->GetSizer()->AddStretchSpacer();
-    test_info_panel->GetSizer()->Add(this->exam_timer_display, 0, wxALIGN_RIGHT | wxALL, 10); // Use wxALIGN_RIGHT without specifying wxALIGN_LEFT
-
-    __left_sizer_vertical->Add(test_info_panel, 2.4, wxEXPAND | wxALL, 0);
-    __left_sizer_vertical->Add(question_display_panel, 7.6, wxEXPAND | wxALL, 0);
-    __right_sizer_vertical->Add(questions_info_panel, 2.4, wxEXPAND | wxALL, 0);
-    __right_sizer_vertical->Add(questions_navigation_panel, 7.6, wxEXPAND | wxALL, 0);
-
-    // Add panels to the main sizer with the specified ratios
-    __main_sizer_horizontal->Add(__left_sizer_vertical, 7.6, wxEXPAND | wxALL, 0);
-    __main_sizer_horizontal->Add(__right_sizer_vertical, 2.4, wxEXPAND | wxALL, 0);
-
-    // Set the main sizer for the frame
-    SetSizerAndFit(__main_sizer_horizontal);
+    test_info_panel->GetSizer()->Add(this->exam_timer_display, 0, wxALIGN_RIGHT | wxALL, 10);
 }
 
 void examFrame::OnTimer(wxTimerEvent &event)

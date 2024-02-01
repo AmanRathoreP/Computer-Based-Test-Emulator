@@ -32,12 +32,20 @@
     <ClCompile Include="src\app.cpp" />
     <ClCompile Include="src\frames\exam_frame.cpp" />
     <ClCompile Include="src\frames\main_frame.cpp" />
+    <ClCompile Include="src\panels\questions_navigation_panel.cpp" />
+    <ClCompile Include="src\panels\questions_panel.cpp" />
+    <ClCompile Include="src\panels\section_info_panel.cpp" />
+    <ClCompile Include="src\panels\test_info_panel.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\app.h" />
     <ClInclude Include="src\data structures\test_starting_info.h" />
     <ClInclude Include="src\frames\exam_frame.h" />
     <ClInclude Include="src\frames\main_frame.h" />
+    <ClInclude Include="src\panels\questions_navigation_panel.h" />
+    <ClInclude Include="src\panels\questions_panel.h" />
+    <ClInclude Include="src\panels\section_info_panel.h" />
+    <ClInclude Include="src\panels\test_info_panel.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
