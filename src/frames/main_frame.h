@@ -5,6 +5,8 @@
 #include <fstream>
 #include <json/json.h>
 #include <wx/html/htmlwin.h>
+#include <rapidcsv.h>
+#include <unordered_set>
 
 class mainFrame :public wxFrame
 {
@@ -26,8 +28,9 @@ private:
     void on_create_test_clicked(wxCommandEvent& event);
     void on_load_test_clicked(wxCommandEvent& event);
     void check_weather_all_ther_required_files_are_avaliable_in_folder(const wxString&);
-    bool check_weather_test_file_is_fit(const wxString&);
+    bool check_weather_test_file_is_fit(const wxString&, const wxString&);
     unsigned short int read_json_file(const std::string&);
+    unsigned short int read_csv_file(const std::string&);
     std::string generate_html_to_display_test_info();
     void on_start_test_clicked(wxCommandEvent& event);
 

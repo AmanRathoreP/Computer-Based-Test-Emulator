@@ -87,13 +87,14 @@ void mainFrame::check_weather_all_ther_required_files_are_avaliable_in_folder(co
 {
 
     wxString file_path = wxString(folder_path).append("\\test_info.json");
-    if (wxFileExists(file_path))
+    wxString questions_details_file_path = wxString(folder_path).append("\\test_questions.csv");
+    if (wxFileExists(file_path) and wxFileExists(questions_details_file_path))
     {
-        check_weather_test_file_is_fit(file_path);
+        check_weather_test_file_is_fit(file_path, questions_details_file_path);
     }
     else
     {
-        wxMessageBox("Crucial file to start the test is missing!\nPlease contact the test provider for more info.", "Error", wxOK | wxICON_ERROR, this);
+        wxMessageBox("Crucial file(s) to start the test is missing!\nPlease contact the test provider for more info.", "Error", wxOK | wxICON_ERROR, this);
     }
 }
 
@@ -123,39 +124,41 @@ unsigned short int mainFrame::read_json_file(const std::string &file_path)
     return 3; // Data reading successfully completed
 }
 
-bool mainFrame::check_weather_test_file_is_fit(const wxString &test_file_location)
+bool mainFrame::check_weather_test_file_is_fit(const wxString &test_file_location, const wxString &test_questions_details_file)
 {
-    auto test_file_content = this->read_json_file(test_file_location.ToStdString());
-    if (test_file_content == 1)
+    auto test_file_content_status = this->read_json_file(test_file_location.ToStdString());
+
+    if (test_file_content_status == 1)
     {
         // failure to read
         wxMessageBox("Unable to read the test file check weather required permission are granted or not.", "Reading Error", wxOK | wxICON_ERROR, this);
         return false;
     }
-    if (test_file_content == 2)
+    if (test_file_content_status == 2)
     {
         // parsing error
         wxMessageBox("Unable to parse the file!\nTest file may be corrupted.", "Parsing Error", wxOK | wxICON_ERROR, this);
         return false;
     }
+
+    // TODO set an options in settings to eliminate hard coding of the location of result file
+    this->test_starting_data.student_test_result_file = wxString(test_questions_details_file.ToStdString()).Truncate(test_questions_details_file.length() - wxString("test_questions.csv").length()).append("result.csv");
+    auto test_questions_details_status = this->read_csv_file(test_questions_details_file.ToStdString());
+    
+    if (test_questions_details_status == 1)
+    {
+        // failure to read
+        wxMessageBox("Unable to read the questions info file check weather required permission are granted or not.", "Reading Error", wxOK | wxICON_ERROR, this);
+        return false;
+    }
+    if (test_questions_details_status == 2)
+    {
+        // parsing error
+        wxMessageBox("Unable to parse the file!\nTest questions file may be corrupted or not properly created.", "Parsing Error", wxOK | wxICON_ERROR, this);
+        return false;
+    }
     else
     {
-        /*
-        std::string result;
-        result.append("Duration: ").append(std::to_string(test_starting_data.duration)).append(" seconds\n");
-        result.append("Test Name: ").append(test_starting_data.test_name).append("\n");
-        result.append("Number of Sections: ").append(std::to_string(test_starting_data.number_of_sections)).append("\n\n");
-
-        for (unsigned short int i = 0; i < test_starting_data.number_of_sections; ++i)
-        {
-            result.append("Section ").append(std::to_string(i + 1)).append(":\n");
-            result.append("   Number of Questions: ").append(std::to_string(test_starting_data.sections[i].number_of_questions)).append("\n");
-            result.append("   Section Name: ").append(test_starting_data.sections[i].section_name).append("\n");
-            result.append("   Priority: ").append(std::to_string(test_starting_data.sections[i].priority)).append("\n");
-        }
-        wxMessageBox(result, "JSON information", wxOK | wxICON_INFORMATION, this);
-        */
-
         this->start_test_button->Enable(true);
         this->test_info_display->SetPage(this->generate_html_to_display_test_info());
 
@@ -205,4 +208,48 @@ void mainFrame::on_start_test_clicked(wxCommandEvent& event)
     this->start_test_button->Enable(false);
     auto* exam_frame = new examFrame(this->test_starting_data);
     exam_frame->ShowFullScreen(true);
+}
+
+unsigned short int mainFrame::read_csv_file(const std::string &file_path)
+{
+    rapidcsv::Document doc(file_path, rapidcsv::LabelParams(0, -1));
+
+    // Check if the actual header matches the expected header
+    std::vector<std::string> expectedHeader = {"question_file_name", "section_order", "question_number", "question_type"};
+    if (doc.GetColumnNames() != expectedHeader) {
+        // std::cerr << "Error: CSV header does not match the expected format." << std::endl;
+        return 2; // Return 2 on parsing error
+    }
+
+    // Check each row for the expected number of columns
+    const size_t expectedColumnCount = expectedHeader.size();
+    for (size_t rowIdx = 0; rowIdx < doc.GetRowCount(); ++rowIdx)
+    {
+        const size_t actualColumnCount = doc.GetRow<std::string>(rowIdx).size();
+        if (actualColumnCount != expectedColumnCount)
+        {
+            // std::cerr << "Error: Row " << rowIdx + 1 << " does not have the expected number of columns." << std::endl;
+            return 2; // Return 2 on parsing error
+        }
+    }
+
+    //TODO also check values for different columns
+    // Check if all values in the specified column match any of the expected values
+    std::unordered_set<std::string> expected_question_types = { "sc", "in", "mc", "fl" };
+    for (size_t rowIdx = 0; rowIdx < doc.GetRowCount(); ++rowIdx) {
+        const std::string actualValue = doc.GetCell<std::string>(3, rowIdx);
+        if (expected_question_types.find(actualValue) == expected_question_types.end()) {
+            // std::cerr << "Error: Value in row " << rowIdx + 1 << " does not match any expected value." << std::endl;
+            return 2;
+        }
+    }
+
+    // Add some student stats column
+    doc.InsertColumn<std::string>(4, std::vector<std::string>(doc.GetRowCount(), "nv"), "question_status");
+    doc.InsertColumn<unsigned int>(5, std::vector<unsigned int>(doc.GetRowCount(), 0), "time_spent");
+    doc.InsertColumn<std::string>(6, std::vector<std::string>(doc.GetRowCount(), "NaN"), "answer");
+    
+    doc.Save(this->test_starting_data.student_test_result_file);
+
+    return 3; // Data reading successfully completed
 }

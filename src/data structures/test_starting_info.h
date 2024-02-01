@@ -22,6 +22,7 @@ struct test_info {
     unsigned int threshold_time; // in seconds
     std::string test_name;
     std::string test_description;
+    std::string student_test_result_file;
 
     unsigned short int number_of_sections;
     test_section_info* sections;

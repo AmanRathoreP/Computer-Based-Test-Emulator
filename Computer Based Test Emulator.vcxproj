@@ -32,6 +32,7 @@
     <ClCompile Include="src\app.cpp" />
     <ClCompile Include="src\frames\exam_frame.cpp" />
     <ClCompile Include="src\frames\main_frame.cpp" />
+    <ClCompile Include="src\others\selectable_buttons.cpp" />
     <ClCompile Include="src\panels\questions_navigation_panel.cpp" />
     <ClCompile Include="src\panels\questions_panel.cpp" />
     <ClCompile Include="src\panels\section_info_panel.cpp" />
@@ -42,6 +43,7 @@
     <ClInclude Include="src\data structures\test_starting_info.h" />
     <ClInclude Include="src\frames\exam_frame.h" />
     <ClInclude Include="src\frames\main_frame.h" />
+    <ClInclude Include="src\others\selectable_buttons.h" />
     <ClInclude Include="src\panels\questions_navigation_panel.h" />
     <ClInclude Include="src\panels\questions_panel.h" />
     <ClInclude Include="src\panels\section_info_panel.h" />
@@ -173,7 +175,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\include\msvc;include;$(VCPKG)\installed\x64-windows\include;src\data structures;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\include\msvc;include;$(VCPKG)\installed\x64-windows\include;src\data structures;src\others;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

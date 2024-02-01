@@ -19,15 +19,15 @@ wxBEGIN_EVENT_TABLE(examFrame, wxFrame)
     questionsNavigationPanel *questions_navigation_panel = new questionsNavigationPanel(this);
     questions_navigation_panel->SetBackgroundColour(__background_color);
 
-    questionsPanel *question_display_panel = new questionsPanel(this);
+    questionsPanel *question_display_panel = new questionsPanel(this, this->test_starting_data);
     question_display_panel->SetBackgroundColour(__background_color);
 
     sectionInfoPanel *questions_info_panel = new sectionInfoPanel(this);
     questions_info_panel->SetBackgroundColour(__background_color);
 
     // Add panels to the grid bag sizer
-    static float __x_strech = 19.48;
-    static float __y_strech = 5.65;
+    static float __x_strech = 19.48f;
+    static float __y_strech = 5.65f;
     grid_bag_sizer->Add(test_info_panel, wxGBPosition(0 * __y_strech, 0 * __x_strech), wxGBSpan(2 * __y_strech, 8 * __x_strech), wxEXPAND | wxALL, 5);
     grid_bag_sizer->Add(question_display_panel, wxGBPosition(2 * __y_strech, 0 * __x_strech), wxGBSpan(8 * __y_strech, 8 * __x_strech), wxEXPAND | wxALL, 5);
     grid_bag_sizer->Add(questions_info_panel, wxGBPosition(0 * __y_strech, 8 * __x_strech), wxGBSpan(2 * __y_strech, 2 * __x_strech), wxEXPAND | wxALL, 5);
