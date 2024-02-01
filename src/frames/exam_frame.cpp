@@ -26,12 +26,12 @@ wxBEGIN_EVENT_TABLE(examFrame, wxFrame)
     questions_info_panel->SetBackgroundColour(__background_color);
 
     // Add panels to the grid bag sizer
-    static float __x_strech = 19.48f;
-    static float __y_strech = 5.65f;
-    grid_bag_sizer->Add(test_info_panel, wxGBPosition(0 * __y_strech, 0 * __x_strech), wxGBSpan(2 * __y_strech, 8 * __x_strech), wxEXPAND | wxALL, 5);
-    grid_bag_sizer->Add(question_display_panel, wxGBPosition(2 * __y_strech, 0 * __x_strech), wxGBSpan(8 * __y_strech, 8 * __x_strech), wxEXPAND | wxALL, 5);
-    grid_bag_sizer->Add(questions_info_panel, wxGBPosition(0 * __y_strech, 8 * __x_strech), wxGBSpan(2 * __y_strech, 2 * __x_strech), wxEXPAND | wxALL, 5);
-    grid_bag_sizer->Add(questions_navigation_panel, wxGBPosition(2 * __y_strech, 8 * __x_strech), wxGBSpan(8 * __y_strech, 2 * __x_strech), wxEXPAND | wxALL, 5);
+    static float __x_stretch = 19.48f;
+    static float __y_stretch = 5.65f;
+    grid_bag_sizer->Add(test_info_panel, wxGBPosition(0 * __y_stretch, 0 * __x_stretch), wxGBSpan(2 * __y_stretch, 8 * __x_stretch), wxEXPAND | wxALL, 5);
+    grid_bag_sizer->Add(question_display_panel, wxGBPosition(2 * __y_stretch, 0 * __x_stretch), wxGBSpan(8 * __y_stretch, 8 * __x_stretch), wxEXPAND | wxALL, 5);
+    grid_bag_sizer->Add(questions_info_panel, wxGBPosition(0 * __y_stretch, 8 * __x_stretch), wxGBSpan(2 * __y_stretch, 2 * __x_stretch), wxEXPAND | wxALL, 5);
+    grid_bag_sizer->Add(questions_navigation_panel, wxGBPosition(2 * __y_stretch, 8 * __x_stretch), wxGBSpan(8 * __y_stretch, 2 * __x_stretch), wxEXPAND | wxALL, 5);
 
     SetSizerAndFit(grid_bag_sizer);
 
