@@ -8,6 +8,7 @@ wxBEGIN_EVENT_TABLE(selectableButton, wxButton)
                 selectableButton::selectableButton(wxWindow *parent, wxWindowID id, const wxString &label, wxColor selected_background_color, wxColor neutral_background_color, wxColor selected_foreground_color, wxColor neutral_foreground_color, const wxPoint &pos, const wxSize &size, long style)
     : wxButton(parent, id, label, pos, size, style), selected(false), selected_background_color(selected_background_color), neutral_background_color(neutral_background_color), selected_foreground_color(selected_foreground_color), neutral_foreground_color(neutral_foreground_color)
 {
+    SetFont(wxFont(20, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD));
     Bind(wxEVT_LEFT_DOWN, [this](wxMouseEvent &event)
          {
         // Deselect when clicking outside the button

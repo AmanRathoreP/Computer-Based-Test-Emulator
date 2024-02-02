@@ -21,10 +21,19 @@ public:
     void OnTimer(wxTimerEvent &);
 
 private:
+    testInfoPanel *test_info_panel;
+    questionsNavigationPanel *questions_navigation_panel;
+    questionsPanel *question_display_panel;
+    sectionInfoPanel *questions_info_panel;
+
     wxTimer *exam_timer; // resolution = 1 second
     wxStaticText *exam_timer_display;
     test_info test_starting_data;
     wxString formatted_exam_time(void);
+
+    void on_question_navigated(wxCommandEvent &event);
+    unsigned short int current_question = 1;
+    unsigned short int current_section_order = 1;
 
     wxDECLARE_EVENT_TABLE();
 };

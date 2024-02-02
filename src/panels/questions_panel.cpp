@@ -19,8 +19,22 @@ questionsPanel::questionsPanel(wxWindow *parent, test_info& test_starting_data) 
     scrolledWindow->SetSizer(horizontalSizer);
     scrolledWindow->SetScrollRate(10, 0); // Set horizontal scroll rate
 
-    wxBoxSizer *verticalSizer = new wxBoxSizer(wxVERTICAL);
-    verticalSizer->Add(scrolledWindow, 0, wxEXPAND | wxTOP | wxLEFT | wxRIGHT, 10);
+    // Create a wxStaticText for displaying the question number
+    this->question_number_text = new wxStaticText(this, wxID_ANY, "Question: 01", wxDefaultPosition, wxDefaultSize, wxALIGN_LEFT | wxST_NO_AUTORESIZE);
+    this->question_number_text->SetFont(wxFont(27, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD));
+
+    wxBoxSizer* verticalSizer = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* question_number_and_sections_sizer = new wxBoxSizer(wxHORIZONTAL);
+    question_number_and_sections_sizer->Add(this->question_number_text, 1, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL);
+    question_number_and_sections_sizer->Add(scrolledWindow, 5, wxALIGN_RIGHT);
+    verticalSizer->Add(question_number_and_sections_sizer, 0, wxEXPAND | wxALIGN_TOP | wxALL);
 
     SetSizerAndFit(verticalSizer);
+}
+
+void questionsPanel::set_question(unsigned short int section_order, unsigned short int question_number) 
+{
+    //display that question
+    this->question_number_text->SetLabel(wxString::Format("Question: %02d", question_number));
+
 }

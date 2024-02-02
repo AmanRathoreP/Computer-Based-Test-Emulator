@@ -2,9 +2,10 @@
 
 wxBEGIN_EVENT_TABLE(examFrame, wxFrame)
     EVT_TIMER(examFrame::ID_timer, examFrame::OnTimer)
-        wxEND_EVENT_TABLE()
+        EVT_COMMAND(wxID_ANY, QUESTION_NAVIGATED, examFrame::on_question_navigated)
+            wxEND_EVENT_TABLE()
 
-            examFrame::examFrame(test_info &test_starting_data) : test_starting_data(test_starting_data), wxFrame(NULL, wxID_ANY, wxEmptyString, wxDefaultPosition, wxGetDisplaySize(), wxDEFAULT_FRAME_STYLE)
+                examFrame::examFrame(test_info &test_starting_data) : test_starting_data(test_starting_data), wxFrame(NULL, wxID_ANY, wxEmptyString, wxDefaultPosition, wxGetDisplaySize(), wxDEFAULT_FRAME_STYLE)
 {
     SetWindowStyle(GetWindowStyle() | wxFRAME_NO_TASKBAR);
 
@@ -13,16 +14,16 @@ wxBEGIN_EVENT_TABLE(examFrame, wxFrame)
     auto __background_color = wxColor(235, 237, 237);
 
     // Create panels
-    testInfoPanel *test_info_panel = new testInfoPanel(this);
+    this->test_info_panel = new testInfoPanel(this);
     test_info_panel->SetBackgroundColour(__background_color);
 
-    questionsNavigationPanel *questions_navigation_panel = new questionsNavigationPanel(this);
+    this->questions_navigation_panel = new questionsNavigationPanel(this, 61, 45);
     questions_navigation_panel->SetBackgroundColour(__background_color);
 
-    questionsPanel *question_display_panel = new questionsPanel(this, this->test_starting_data);
+    this->question_display_panel = new questionsPanel(this, this->test_starting_data);
     question_display_panel->SetBackgroundColour(__background_color);
 
-    sectionInfoPanel *questions_info_panel = new sectionInfoPanel(this);
+    this->questions_info_panel = new sectionInfoPanel(this);
     questions_info_panel->SetBackgroundColour(__background_color);
 
     // Add panels to the grid bag sizer
@@ -86,4 +87,10 @@ wxString examFrame::formatted_exam_time(void)
         return wxString::Format("%03d:%02d", this->exam_remaining_time / 60, this->exam_remaining_time % 60);
     }
     return wxString::Format("%04d:%02d", this->exam_remaining_time / 60, this->exam_remaining_time % 60);
+}
+
+void examFrame::on_question_navigated(wxCommandEvent &event)
+{
+    this->current_question = event.GetInt();
+    this->question_display_panel->set_question(this->current_section_order, this->current_question);
 }
