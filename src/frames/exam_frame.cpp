@@ -3,6 +3,7 @@
 wxBEGIN_EVENT_TABLE(examFrame, wxFrame)
     EVT_TIMER(examFrame::ID_timer, examFrame::OnTimer)
         EVT_COMMAND(wxID_ANY, QUESTION_NAVIGATED, examFrame::on_question_navigated)
+    EVT_COMMAND(wxID_ANY, SECTION_NAVIGATED, examFrame::on_section_navigated)
             wxEND_EVENT_TABLE()
 
                 examFrame::examFrame(test_info &test_starting_data) : test_starting_data(test_starting_data), wxFrame(NULL, wxID_ANY, wxEmptyString, wxDefaultPosition, wxGetDisplaySize(), wxDEFAULT_FRAME_STYLE)
@@ -93,4 +94,10 @@ void examFrame::on_question_navigated(wxCommandEvent &event)
 {
     this->current_question = event.GetInt();
     this->question_display_panel->set_question(this->current_section_order, this->current_question);
+}
+
+void examFrame::on_section_navigated(wxCommandEvent& event)
+{
+    this->current_section_order = event.GetInt();
+    this->question_display_panel->set_question(this->current_section_order, this->current_section_order);
 }

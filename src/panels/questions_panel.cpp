@@ -1,5 +1,11 @@
 #include "questions_panel.h"
 
+wxDEFINE_EVENT(SECTION_NAVIGATED, wxCommandEvent);
+
+wxBEGIN_EVENT_TABLE(questionsPanel, wxPanel)
+EVT_BUTTON(wxID_ANY, questionsPanel::on_section_changed)
+wxEND_EVENT_TABLE()
+
 questionsPanel::questionsPanel(wxWindow *parent, test_info& test_starting_data) : wxPanel(parent, wxID_ANY), test_starting_data(test_starting_data)
 {
 
@@ -11,8 +17,12 @@ questionsPanel::questionsPanel(wxWindow *parent, test_info& test_starting_data) 
     wxBoxSizer *horizontalSizer = new wxBoxSizer(wxHORIZONTAL);
     for (int i = 1; i <= this->test_starting_data.number_of_sections; ++i)
     {
-        wxString buttonLabel = this->test_starting_data.sections[i-1].section_name;
-        auto *button = new selectableButton(scrolledWindow, wxID_ANY, buttonLabel);
+        auto *button = new selectableButton(scrolledWindow, wxID_ANY, this->test_starting_data.sections[i - 1].section_name, this->test_starting_data.sections[i - 1].priority);
+        buttons.push_back(button);
+    }
+    std::sort(this->buttons.begin(), this->buttons.end(), __compare_by_selection_order);
+    this->buttons.front()->set_selected(true);
+    for (const auto& button : buttons) {
         horizontalSizer->Add(button, 0, wxALIGN_CENTER | wxALL, 10);
     }
 
@@ -37,4 +47,30 @@ void questionsPanel::set_question(unsigned short int section_order, unsigned sho
     //display that question
     this->question_number_text->SetLabel(wxString::Format("Question: %02d", question_number));
 
+}
+
+void questionsPanel::on_section_changed(wxCommandEvent& event) {
+    auto* pressed_button = dynamic_cast<selectableButton*>(event.GetEventObject());
+    if (pressed_button) {
+        unsigned short int button_number = pressed_button->section_order;
+
+        // Set the clicked button to selected (true)
+        pressed_button->set_selected(true);
+
+        // Set all other buttons to selected (false)
+        for (auto* button : buttons) {
+            if (button->section_order != pressed_button->section_order) {
+                button->set_selected(false);
+            }
+        }
+
+        wxCommandEvent custom_event(SECTION_NAVIGATED, GetId());
+        custom_event.SetInt(button_number);
+        GetEventHandler()->ProcessEvent(custom_event);
+    }
+    event.Skip();
+}
+
+bool inline __compare_by_selection_order(const selectableButton* a, const selectableButton* b) {
+    return a->section_order < b->section_order;
 }

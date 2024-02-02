@@ -32,6 +32,7 @@ private:
     wxString formatted_exam_time(void);
 
     void on_question_navigated(wxCommandEvent &event);
+    void on_section_navigated(wxCommandEvent &event);
     unsigned short int current_question = 1;
     unsigned short int current_section_order = 1;
 
