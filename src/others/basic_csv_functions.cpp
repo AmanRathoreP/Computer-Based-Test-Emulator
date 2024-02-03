@@ -70,3 +70,18 @@ int count_rows_with_specific_values(rapidcsv::Document& doc, const std::vector<s
 
     return count;
 }
+
+int find_row_number(const rapidcsv::Document& doc, const std::string& column1, const std::string& value1, const std::string& column2, const std::string& value2) {
+    // Iterate through the rows
+    for (int row = 0; row < doc.GetRowCount(); ++row) {
+        // Check if the values in the specified columns match the desired values
+        if (doc.GetCell<std::string>(column1, row) == value1 &&
+            doc.GetCell<std::string>(column2, row) == value2) {
+            // Return the row number when a match is found
+            return row;
+        }
+    }
+
+    // Return -1 if no match is found
+    return -1;
+}

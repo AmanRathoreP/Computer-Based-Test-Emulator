@@ -26,6 +26,7 @@ wxBEGIN_EVENT_TABLE(examFrame, wxFrame)
 
     this->question_display_panel = new questionsPanel(this, this->test_starting_data);
     question_display_panel->SetBackgroundColour(__background_color);
+    this->question_display_panel->update_result_doc(this->result_doc);
 
     this->questions_info_panel = new sectionInfoPanel(this);
     questions_info_panel->SetBackgroundColour(__background_color);
