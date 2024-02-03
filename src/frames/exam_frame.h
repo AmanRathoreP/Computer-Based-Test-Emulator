@@ -19,6 +19,7 @@ public:
         ID_timer = 4,
     };
     void OnTimer(wxTimerEvent &);
+    rapidcsv::Document result_doc;
 
 private:
     testInfoPanel *test_info_panel;
@@ -33,8 +34,18 @@ private:
 
     void on_question_navigated(wxCommandEvent &event);
     void on_section_navigated(wxCommandEvent &event);
-    unsigned short int current_question = 1;
     unsigned short int current_section_order = 1;
+
+    struct selected_questions_info {
+        std::map<unsigned short int, unsigned short int> question;
+        
+        selected_questions_info(unsigned short int total_number_of_sections) {
+            for (unsigned short int i = total_number_of_sections; i != 0; i--) {
+                question[i] = 1;
+            }
+        }
+    };
+    selected_questions_info selected_questions = selected_questions_info(1);
 
     wxDECLARE_EVENT_TABLE();
 };

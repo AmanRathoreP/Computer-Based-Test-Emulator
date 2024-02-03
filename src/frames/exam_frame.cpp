@@ -10,6 +10,9 @@ wxBEGIN_EVENT_TABLE(examFrame, wxFrame)
 {
     SetWindowStyle(GetWindowStyle() | wxFRAME_NO_TASKBAR);
 
+    this->result_doc = rapidcsv::Document(this->test_starting_data.student_test_result_file);
+    this->selected_questions = selected_questions_info(this->test_starting_data.number_of_sections);
+
     wxGridBagSizer *grid_bag_sizer = new wxGridBagSizer(0, 0);
 
     auto __background_color = wxColor(235, 237, 237);
@@ -18,7 +21,7 @@ wxBEGIN_EVENT_TABLE(examFrame, wxFrame)
     this->test_info_panel = new testInfoPanel(this);
     test_info_panel->SetBackgroundColour(__background_color);
 
-    this->questions_navigation_panel = new questionsNavigationPanel(this, 61, 45);
+    this->questions_navigation_panel = new questionsNavigationPanel(this, this->current_section_order, this->selected_questions.question[this->current_section_order], this->result_doc, this->test_starting_data.number_of_sections);
     questions_navigation_panel->SetBackgroundColour(__background_color);
 
     this->question_display_panel = new questionsPanel(this, this->test_starting_data);
@@ -92,12 +95,21 @@ wxString examFrame::formatted_exam_time(void)
 
 void examFrame::on_question_navigated(wxCommandEvent &event)
 {
-    this->current_question = event.GetInt();
-    this->question_display_panel->set_question(this->current_section_order, this->current_question);
+    if (this->selected_questions.question[this->current_section_order] == event.GetInt())
+        return;
+
+    this->selected_questions.question[this->current_section_order] = event.GetInt();
+    this->question_display_panel->set_question(this->current_section_order, this->selected_questions.question[this->current_section_order]);
 }
 
 void examFrame::on_section_navigated(wxCommandEvent& event)
 {
+    if (this->current_section_order == event.GetInt())
+        return;
+
     this->current_section_order = event.GetInt();
-    this->question_display_panel->set_question(this->current_section_order, this->current_section_order);
+
+    this->question_display_panel->set_question(this->current_section_order, this->selected_questions.question[this->current_section_order]);
+    this->questions_navigation_panel->refresh(this->current_section_order, this->selected_questions.question[this->current_section_order], this->result_doc);
+
 }
