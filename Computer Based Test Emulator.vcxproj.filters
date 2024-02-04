@@ -21,6 +21,7 @@
     <ClCompile Include="src\others\selectable_buttons.cpp" />
     <ClCompile Include="src\others\question_number_button.cpp" />
     <ClCompile Include="src\others\basic_csv_functions.cpp" />
+    <ClCompile Include="src\others\custom_buttons.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\app.h" />
@@ -34,5 +35,6 @@
     <ClInclude Include="src\others\selectable_buttons.h" />
     <ClInclude Include="src\others\question_number_button.h" />
     <ClInclude Include="src\others\basic_csv_functions.h" />
+    <ClInclude Include="src\others\custom_buttons.h" />
   </ItemGroup>
 </Project>

@@ -33,6 +33,7 @@
     <ClCompile Include="src\frames\exam_frame.cpp" />
     <ClCompile Include="src\frames\main_frame.cpp" />
     <ClCompile Include="src\others\basic_csv_functions.cpp" />
+    <ClCompile Include="src\others\custom_buttons.cpp" />
     <ClCompile Include="src\others\question_number_button.cpp" />
     <ClCompile Include="src\others\selectable_buttons.cpp" />
     <ClCompile Include="src\panels\questions_navigation_panel.cpp" />
@@ -46,6 +47,7 @@
     <ClInclude Include="src\frames\exam_frame.h" />
     <ClInclude Include="src\frames\main_frame.h" />
     <ClInclude Include="src\others\basic_csv_functions.h" />
+    <ClInclude Include="src\others\custom_buttons.h" />
     <ClInclude Include="src\others\question_number_button.h" />
     <ClInclude Include="src\others\selectable_buttons.h" />
     <ClInclude Include="src\panels\questions_navigation_panel.h" />

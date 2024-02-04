@@ -5,6 +5,7 @@ wxDEFINE_EVENT(QUESTION_OPTION_CLICKED, wxCommandEvent);
 
 wxBEGIN_EVENT_TABLE(questionsPanel, wxPanel)
 EVT_BUTTON(wxID_ANY, questionsPanel::on_section_changed)
+EVT_BUTTON(wxID_ANY, questionsPanel::on_answer_choosed)
 wxEND_EVENT_TABLE()
 
 questionsPanel::questionsPanel(wxWindow *parent, test_info& test_starting_data, rapidcsv::Document doc) : wxPanel(parent, wxID_ANY), test_starting_data(test_starting_data)
@@ -67,17 +68,31 @@ questionsPanel::questionsPanel(wxWindow *parent, test_info& test_starting_data, 
     question_display_window->SetSizer(question_display_sizer);
     question_display_window->SetScrollRate(0, 20);
 
+    this->answer_options_sizer = new wxBoxSizer(wxHORIZONTAL);
+    this->text_input_answer = new wxTextCtrl(this, wxID_ANY, wxString("Ans..."), wxDefaultPosition, wxSize(138, 39), 0);
+    this->text_input_answer->SetFont(wxFont(20, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD));
+    this->answer_options_sizer->Add(this->text_input_answer, 0, wxALIGN_CENTER_VERTICAL);
+    
+    std::vector<char> options = { 'A', 'B', 'C', 'D' };
+    for (unsigned short int i = 0; i < options.size(); i++)
+    {
+        this->answer_options.push_back(new customButton(this, wxID_ANY, options[i], true, 29, 35));
+        this->answer_options_sizer->Add(this->answer_options[i], 0, wxALIGN_BOTTOM);
+    }
+
+
     wxBoxSizer* verticalSizer = new wxBoxSizer(wxVERTICAL);
     wxBoxSizer* question_number_and_sections_sizer = new wxBoxSizer(wxHORIZONTAL);
     wxBoxSizer *question_options_sizer = new wxBoxSizer(wxVERTICAL);
 
     question_number_and_sections_sizer->Add(this->question_number_text, 1, wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL);
     question_number_and_sections_sizer->Add(scrolledWindow, 5, wxALIGN_RIGHT);
+    question_options_sizer->Add(this->answer_options_sizer, 14, wxALIGN_TOP | wxALIGN_CENTER_HORIZONTAL);
     question_options_sizer->Add(question_related_options_sizer, 10, wxALIGN_TOP | wxALIGN_CENTER_HORIZONTAL);
     question_options_sizer->Add(questions_navigation_options_sizer, 7, wxALIGN_BOTTOM | wxALIGN_CENTER_HORIZONTAL);
     verticalSizer->Add(question_number_and_sections_sizer, 4, wxEXPAND | wxALIGN_TOP | wxALL);
-    verticalSizer->Add(question_display_window, 44, wxEXPAND | wxALIGN_CENTER_HORIZONTAL);
-    verticalSizer->Add(question_options_sizer, 5, wxALIGN_BOTTOM | wxALIGN_CENTER_HORIZONTAL);
+    verticalSizer->Add(question_display_window, 40, wxEXPAND | wxALIGN_CENTER_HORIZONTAL);
+    verticalSizer->Add(question_options_sizer, 9, wxALIGN_BOTTOM | wxALIGN_CENTER_HORIZONTAL);
 
     SetSizerAndFit(verticalSizer);
     this->set_question(1, 1);
@@ -86,6 +101,9 @@ questionsPanel::questionsPanel(wxWindow *parent, test_info& test_starting_data, 
 void questionsPanel::set_question(unsigned short int section_order, unsigned short int question_number) 
 {
  
+    this->current_section_order = section_order;
+    this->current_question_number = question_number;
+
     unsigned short int question_row_number = find_row_number(this->result_doc, "section_order", std::to_string(section_order), "question_number", std::to_string(question_number));
 
     wxImage question_image;
@@ -110,6 +128,38 @@ void questionsPanel::set_question(unsigned short int section_order, unsigned sho
         if (button->section_order == section_order) {
             button->set_selected(true);
         }
+    }
+
+    std::string question_type = this->result_doc.GetCell<std::string>(3, find_row_number(this->result_doc, "section_order", std::to_string(this->current_section_order), "question_number", std::to_string(this->current_question_number)));
+    if (question_type == "in") {
+        //display entry box for integers
+        for (auto* option : answer_options) {
+            option->Show(false);
+        }
+        this->text_input_answer->Show(true);
+    }
+    else if (question_type == "fl") {
+        //display entry box for floats
+        for (auto* option : answer_options) {
+            option->Show(false);
+        }
+        this->text_input_answer->Show(true);
+    }
+    else if (question_type == "sc") {
+        //single correct
+        this->reset_answer_options();
+        for (auto* option : answer_options) {
+            option->Show(true);
+        }
+        this->text_input_answer->Show(false);
+    }
+    else if (question_type == "mc") {
+        //multi correct
+        this->reset_answer_options();
+        for (auto* option : answer_options) {
+            option->Show(true);
+        }
+        this->text_input_answer->Show(false);
     }
 }
 
@@ -197,4 +247,24 @@ void questionsPanel::enable_next(bool enable){
 
 void  questionsPanel::enable_previous(bool enable){
     questions_options_buttons["<< Previous"]->Enable(enable);
+}
+
+void inline questionsPanel::reset_answer_options(void){
+    for (auto* button : this->answer_options) {
+        button->set_selected(false);
+    }
+}
+
+void questionsPanel::on_answer_choosed(wxCommandEvent& event) {
+    auto* pressed_button = dynamic_cast<customButton*>(event.GetEventObject());
+    if (pressed_button) {
+       //checking if question is single correct
+        if ("sc" == this->result_doc.GetCell<std::string>(3, find_row_number(this->result_doc, "section_order", std::to_string(this->current_section_order), "question_number", std::to_string(this->current_question_number)))) {
+            for (auto* button : this->answer_options) {
+                button->set_selected(false);
+            }
+        }
+        pressed_button->set_selected(not pressed_button->current_state);
+    }
+    event.Skip();
 }
