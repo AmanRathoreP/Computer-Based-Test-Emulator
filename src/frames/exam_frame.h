@@ -48,7 +48,5 @@ private:
     };
     selected_questions_info selected_questions = selected_questions_info(1);
 
-    void inline set_section_and_question_on_question_navigation_panel(unsigned short int, unsigned short int);
-
     wxDECLARE_EVENT_TABLE();
 };

@@ -105,6 +105,8 @@ void examFrame::on_question_navigated(wxCommandEvent &event)
 
     this->question_display_panel->enable_next(!((this->selected_questions.question[this->current_section_order] == this->test_starting_data.sections[this->test_starting_data.number_of_sections - 1].number_of_questions) and (this->current_section_order == this->test_starting_data.number_of_sections)));
     this->question_display_panel->enable_previous(!((this->selected_questions.question[this->current_section_order] == 1) and (this->current_section_order == 1)));
+
+    this->question_display_panel->set_question(this->current_section_order, this->selected_questions.question[this->current_section_order]);
 }
 
 void examFrame::on_section_navigated(wxCommandEvent& event)
@@ -120,6 +122,8 @@ void examFrame::on_section_navigated(wxCommandEvent& event)
 
     this->question_display_panel->enable_next(!((this->selected_questions.question[this->current_section_order] == this->test_starting_data.sections[this->test_starting_data.number_of_sections - 1].number_of_questions) and (this->current_section_order == this->test_starting_data.number_of_sections)));
     this->question_display_panel->enable_previous(!((this->selected_questions.question[this->current_section_order] == 1) and (this->current_section_order == 1)));
+
+    this->question_display_panel->set_question(this->current_section_order, this->selected_questions.question[this->current_section_order]);
 }
 
 void examFrame::on_options_on_question_display_clicked(wxCommandEvent& event)
@@ -156,8 +160,5 @@ void examFrame::on_options_on_question_display_clicked(wxCommandEvent& event)
     this->question_display_panel->enable_next(!((this->selected_questions.question[this->current_section_order] == this->test_starting_data.sections[this->test_starting_data.number_of_sections - 1].number_of_questions) and (this->current_section_order == this->test_starting_data.number_of_sections)));
     this->question_display_panel->enable_previous(!((this->selected_questions.question[this->current_section_order] == 1) and (this->current_section_order == 1)));
 
-}
-
-void inline examFrame::set_section_and_question_on_question_navigation_panel(unsigned short int section_number, unsigned short int question_number) {
-
+    this->question_display_panel->set_question(this->current_section_order, this->selected_questions.question[this->current_section_order]);
 }
