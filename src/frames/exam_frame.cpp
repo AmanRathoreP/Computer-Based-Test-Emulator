@@ -4,6 +4,7 @@ wxBEGIN_EVENT_TABLE(examFrame, wxFrame)
     EVT_TIMER(examFrame::ID_timer, examFrame::OnTimer)
         EVT_COMMAND(wxID_ANY, QUESTION_NAVIGATED, examFrame::on_question_navigated)
     EVT_COMMAND(wxID_ANY, SECTION_NAVIGATED, examFrame::on_section_navigated)
+    EVT_COMMAND(wxID_ANY, QUESTION_OPTION_CLICKED, examFrame::on_options_on_question_display_clicked)
             wxEND_EVENT_TABLE()
 
                 examFrame::examFrame(test_info &test_starting_data) : test_starting_data(test_starting_data), wxFrame(NULL, wxID_ANY, wxEmptyString, wxDefaultPosition, wxGetDisplaySize(), wxDEFAULT_FRAME_STYLE)
@@ -24,9 +25,8 @@ wxBEGIN_EVENT_TABLE(examFrame, wxFrame)
     this->questions_navigation_panel = new questionsNavigationPanel(this, this->current_section_order, this->selected_questions.question[this->current_section_order], this->result_doc, this->test_starting_data.number_of_sections);
     questions_navigation_panel->SetBackgroundColour(__background_color);
 
-    this->question_display_panel = new questionsPanel(this, this->test_starting_data);
+    this->question_display_panel = new questionsPanel(this, this->test_starting_data, this->result_doc);
     question_display_panel->SetBackgroundColour(__background_color);
-    this->question_display_panel->update_result_doc(this->result_doc);
 
     this->questions_info_panel = new sectionInfoPanel(this);
     questions_info_panel->SetBackgroundColour(__background_color);
@@ -101,6 +101,10 @@ void examFrame::on_question_navigated(wxCommandEvent &event)
 
     this->selected_questions.question[this->current_section_order] = event.GetInt();
     this->question_display_panel->set_question(this->current_section_order, this->selected_questions.question[this->current_section_order]);
+
+
+    this->question_display_panel->enable_next(!((this->selected_questions.question[this->current_section_order] == this->test_starting_data.sections[this->test_starting_data.number_of_sections - 1].number_of_questions) and (this->current_section_order == this->test_starting_data.number_of_sections)));
+    this->question_display_panel->enable_previous(!((this->selected_questions.question[this->current_section_order] == 1) and (this->current_section_order == 1)));
 }
 
 void examFrame::on_section_navigated(wxCommandEvent& event)
@@ -112,5 +116,48 @@ void examFrame::on_section_navigated(wxCommandEvent& event)
 
     this->question_display_panel->set_question(this->current_section_order, this->selected_questions.question[this->current_section_order]);
     this->questions_navigation_panel->refresh(this->current_section_order, this->selected_questions.question[this->current_section_order], this->result_doc);
+
+
+    this->question_display_panel->enable_next(!((this->selected_questions.question[this->current_section_order] == this->test_starting_data.sections[this->test_starting_data.number_of_sections - 1].number_of_questions) and (this->current_section_order == this->test_starting_data.number_of_sections)));
+    this->question_display_panel->enable_previous(!((this->selected_questions.question[this->current_section_order] == 1) and (this->current_section_order == 1)));
+}
+
+void examFrame::on_options_on_question_display_clicked(wxCommandEvent& event)
+{
+    if (event.GetString() == wxString("Next >>")) {
+        if (this->test_starting_data.sections[this->current_section_order - 1].number_of_questions > this->selected_questions.question[this->current_section_order]) {
+            // navigate to next question in the current section
+            this->selected_questions.question[this->current_section_order] += 1;
+        }
+        else{
+            // navigate to first question in the next section
+            this->current_section_order += 1;
+            this->selected_questions.question[this->current_section_order] = 1;
+        }
+        this->questions_navigation_panel->refresh(this->current_section_order, this->selected_questions.question[this->current_section_order], this->result_doc);
+    }
+    else if (event.GetString() == wxString("<< Previous")) {
+        if (this->selected_questions.question[this->current_section_order] != 1) {
+            // navigate to previous question in the current section
+            this->selected_questions.question[this->current_section_order] -= 1;
+        }
+        else{
+            // navigate to last question in the previous section
+            this->current_section_order -= 1;
+            this->selected_questions.question[this->current_section_order] = this->test_starting_data.sections[this->current_section_order - 1].number_of_questions;
+        }
+        this->questions_navigation_panel->refresh(this->current_section_order, this->selected_questions.question[this->current_section_order], this->result_doc);
+    }
+
+    this->question_display_panel->set_question(this->current_section_order, this->selected_questions.question[this->current_section_order]);
+    this->questions_navigation_panel->refresh(this->current_section_order, this->selected_questions.question[this->current_section_order], this->result_doc);
+
+
+    this->question_display_panel->enable_next(!((this->selected_questions.question[this->current_section_order] == this->test_starting_data.sections[this->test_starting_data.number_of_sections - 1].number_of_questions) and (this->current_section_order == this->test_starting_data.number_of_sections)));
+    this->question_display_panel->enable_previous(!((this->selected_questions.question[this->current_section_order] == 1) and (this->current_section_order == 1)));
+
+}
+
+void inline examFrame::set_section_and_question_on_question_navigation_panel(unsigned short int section_number, unsigned short int question_number) {
 
 }

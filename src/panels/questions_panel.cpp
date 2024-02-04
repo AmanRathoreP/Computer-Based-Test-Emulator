@@ -1,16 +1,19 @@
 #include "questions_panel.h"
 
 wxDEFINE_EVENT(SECTION_NAVIGATED, wxCommandEvent);
+wxDEFINE_EVENT(QUESTION_OPTION_CLICKED, wxCommandEvent);
 
 wxBEGIN_EVENT_TABLE(questionsPanel, wxPanel)
 EVT_BUTTON(wxID_ANY, questionsPanel::on_section_changed)
 wxEND_EVENT_TABLE()
 
-questionsPanel::questionsPanel(wxWindow *parent, test_info& test_starting_data) : wxPanel(parent, wxID_ANY), test_starting_data(test_starting_data)
+questionsPanel::questionsPanel(wxWindow *parent, test_info& test_starting_data, rapidcsv::Document doc) : wxPanel(parent, wxID_ANY), test_starting_data(test_starting_data)
 {
 
     wxPNGHandler* handler = new wxPNGHandler;
     wxImage::AddHandler(handler);
+
+    this->result_doc = doc;
 
     wxBoxSizer *mainSizer = new wxBoxSizer(wxVERTICAL);
 
@@ -77,11 +80,12 @@ questionsPanel::questionsPanel(wxWindow *parent, test_info& test_starting_data) 
     verticalSizer->Add(question_options_sizer, 5, wxALIGN_BOTTOM | wxALIGN_CENTER_HORIZONTAL);
 
     SetSizerAndFit(verticalSizer);
+    this->set_question(1, 1);
 }
 
 void questionsPanel::set_question(unsigned short int section_order, unsigned short int question_number) 
 {
-    
+ 
     unsigned short int question_row_number = find_row_number(this->result_doc, "section_order", std::to_string(section_order), "question_number", std::to_string(question_number));
 
     wxImage question_image;
@@ -101,6 +105,12 @@ void questionsPanel::set_question(unsigned short int section_order, unsigned sho
 
     this->question_number_text->SetLabel(wxString::Format("Question: %02d", question_number));
 
+    for (auto* button : buttons) {
+        button->set_selected(false);
+        if (button->section_order == section_order) {
+            button->set_selected(true);
+        }
+    }
 }
 
 void questionsPanel::on_section_changed(wxCommandEvent& event) {
@@ -138,6 +148,11 @@ void inline questionsPanel::prepare_questions_options_buttons(void)
     questions_options_buttons["<< Previous"] = new wxButton(this, wxID_ANY, "<< Previous");
     questions_options_buttons["Next >>"] = new wxButton(this, wxID_ANY, "Next >>");
 
+    for (const auto& button : questions_options_buttons)
+    {
+        button.second->Bind(wxEVT_BUTTON, &questionsPanel::on_question_option_clicked, this);
+    }
+
     questions_options_buttons["SAVE & NEXT"]->SetBackgroundColour(wxColour(0, 255, 0));
     questions_options_buttons["SAVE & MARK FOR REVIEW"]->SetBackgroundColour(wxColor(237, 205, 109));
     questions_options_buttons["CLEAR RESPONSE"]->SetBackgroundColour(wxColor(199, 212, 202));
@@ -154,17 +169,32 @@ void inline questionsPanel::prepare_questions_options_buttons(void)
     questions_options_buttons["MARK FOR REVIEW & NEXT"]->SetFont(questions_options_buttons["MARK FOR REVIEW & NEXT"]->GetFont().Scale(big_font_scaling_factor));
     questions_options_buttons["<< Previous"]->SetFont(questions_options_buttons["<< Previous"]->GetFont().Scale(small_font_scaling_factor));
     questions_options_buttons["Next >>"]->SetFont(questions_options_buttons["Next >>"]->GetFont().Scale(small_font_scaling_factor));
+
+    //TODO deal with the case where only one question is there in the test
+    this->enable_previous(false);
 }
 
 void questionsPanel::update_result_doc(rapidcsv::Document doc) {
-    static bool called_for_first_time = true;
-    
     this->result_doc = doc;
+}
 
-    if (called_for_first_time) 
+void questionsPanel::on_question_option_clicked(wxCommandEvent& event)
+{
+    auto* pressed_button = dynamic_cast<wxButton*>(event.GetEventObject());
+    if (pressed_button)
     {
-        this->set_question(1, 1);
-        called_for_first_time = false;
+        // Notify any listeners about the button click
+        wxCommandEvent custom_event(QUESTION_OPTION_CLICKED, GetId());
+        custom_event.SetString(pressed_button->GetLabel()); // Set additional data if needed
+        GetEventHandler()->ProcessEvent(custom_event);
     }
+    event.Skip();
+}
 
+void questionsPanel::enable_next(bool enable){
+    questions_options_buttons["Next >>"]->Enable(enable);
+}
+
+void  questionsPanel::enable_previous(bool enable){
+    questions_options_buttons["<< Previous"]->Enable(enable);
 }

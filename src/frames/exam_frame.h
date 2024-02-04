@@ -34,6 +34,7 @@ private:
 
     void on_question_navigated(wxCommandEvent &event);
     void on_section_navigated(wxCommandEvent &event);
+    void on_options_on_question_display_clicked(wxCommandEvent &event);
     unsigned short int current_section_order = 1;
 
     struct selected_questions_info {
@@ -46,6 +47,8 @@ private:
         }
     };
     selected_questions_info selected_questions = selected_questions_info(1);
+
+    void inline set_section_and_question_on_question_navigation_panel(unsigned short int, unsigned short int);
 
     wxDECLARE_EVENT_TABLE();
 };
