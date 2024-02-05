@@ -100,6 +100,18 @@ void examFrame::on_question_navigated(wxCommandEvent &event)
         return;
 
     this->selected_questions.question[this->current_section_order] = event.GetInt();
+
+    data_to_save_in_result question_data = this->question_display_panel->question_data;
+    unsigned short int question_row_number = find_row_number(this->result_doc, "section_order", std::to_string(question_data.section_order), "question_number", std::to_string(question_data.question_number));
+
+    if ((question_data.section_order != 0) and (question_data.question_number != 0)) {
+    this->result_doc.SetCell<std::string>(get_column_index_by_name(this->result_doc, "question_status"), question_row_number, question_data.question_status);
+    this->result_doc.SetCell<std::string>(get_column_index_by_name(this->result_doc, "answer"), question_row_number, question_data.answer);
+    this->result_doc.SetCell<float>(get_column_index_by_name(this->result_doc, "time_spent"), question_row_number, this->question_display_panel->get_time_spent_on_current_question() + wxAtof(wxString(this->result_doc.GetCell<std::string>(get_column_index_by_name(this->result_doc, "time_spent"), question_row_number))));
+    this->question_display_panel->update_result_doc(this->result_doc);
+    this->save_result_doc();
+    }
+
     this->question_display_panel->set_question(this->current_section_order, this->selected_questions.question[this->current_section_order]);
 
 
@@ -107,6 +119,7 @@ void examFrame::on_question_navigated(wxCommandEvent &event)
     this->question_display_panel->enable_previous(!((this->selected_questions.question[this->current_section_order] == 1) and (this->current_section_order == 1)));
 
     this->question_display_panel->set_question(this->current_section_order, this->selected_questions.question[this->current_section_order]);
+
 }
 
 void examFrame::on_section_navigated(wxCommandEvent& event)
@@ -116,6 +129,17 @@ void examFrame::on_section_navigated(wxCommandEvent& event)
 
     this->current_section_order = event.GetInt();
 
+    data_to_save_in_result question_data = this->question_display_panel->question_data;
+    unsigned short int question_row_number = find_row_number(this->result_doc, "section_order", std::to_string(question_data.section_order), "question_number", std::to_string(question_data.question_number));
+
+    if ((question_data.section_order != 0) and (question_data.question_number != 0)) {
+        this->result_doc.SetCell<std::string>(get_column_index_by_name(this->result_doc, "question_status"), question_row_number, question_data.question_status);
+        this->result_doc.SetCell<std::string>(get_column_index_by_name(this->result_doc, "answer"), question_row_number, question_data.answer);
+        this->result_doc.SetCell<float>(get_column_index_by_name(this->result_doc, "time_spent"), question_row_number, this->question_display_panel->get_time_spent_on_current_question() + wxAtof(wxString(this->result_doc.GetCell<std::string>(get_column_index_by_name(this->result_doc, "time_spent"), question_row_number))));
+        this->question_display_panel->update_result_doc(this->result_doc);
+        this->save_result_doc();
+    }
+
     this->question_display_panel->set_question(this->current_section_order, this->selected_questions.question[this->current_section_order]);
     this->questions_navigation_panel->refresh(this->current_section_order, this->selected_questions.question[this->current_section_order], this->result_doc);
 
@@ -124,11 +148,16 @@ void examFrame::on_section_navigated(wxCommandEvent& event)
     this->question_display_panel->enable_previous(!((this->selected_questions.question[this->current_section_order] == 1) and (this->current_section_order == 1)));
 
     this->question_display_panel->set_question(this->current_section_order, this->selected_questions.question[this->current_section_order]);
+
 }
 
 void examFrame::on_options_on_question_display_clicked(wxCommandEvent& event)
 {
-    if (event.GetString() == wxString("Next >>")) {
+
+    wxString button_string = event.GetString();
+
+    if (button_string == "Next >>")
+    {
         if (this->test_starting_data.sections[this->current_section_order - 1].number_of_questions > this->selected_questions.question[this->current_section_order]) {
             // navigate to next question in the current section
             this->selected_questions.question[this->current_section_order] += 1;
@@ -140,7 +169,8 @@ void examFrame::on_options_on_question_display_clicked(wxCommandEvent& event)
         }
         this->questions_navigation_panel->refresh(this->current_section_order, this->selected_questions.question[this->current_section_order], this->result_doc);
     }
-    else if (event.GetString() == wxString("<< Previous")) {
+    else if (button_string == "<< Previous")
+    {
         if (this->selected_questions.question[this->current_section_order] != 1) {
             // navigate to previous question in the current section
             this->selected_questions.question[this->current_section_order] -= 1;
@@ -153,6 +183,15 @@ void examFrame::on_options_on_question_display_clicked(wxCommandEvent& event)
         this->questions_navigation_panel->refresh(this->current_section_order, this->selected_questions.question[this->current_section_order], this->result_doc);
     }
 
+    data_to_save_in_result question_data = this->question_display_panel->question_data;
+    unsigned short int question_row_number = find_row_number(this->result_doc, "section_order", std::to_string(question_data.section_order), "question_number", std::to_string(question_data.question_number));
+
+    this->result_doc.SetCell<std::string>(get_column_index_by_name(this->result_doc, "question_status"), question_row_number, question_data.question_status);
+    this->result_doc.SetCell<std::string>(get_column_index_by_name(this->result_doc, "answer"), question_row_number, question_data.answer);
+    this->result_doc.SetCell<float>(get_column_index_by_name(this->result_doc, "time_spent"), question_row_number, question_data.time_spent + wxAtof(wxString(this->result_doc.GetCell<std::string>(get_column_index_by_name(this->result_doc, "time_spent"), question_row_number))));
+    this->question_display_panel->update_result_doc(this->result_doc);
+    this->save_result_doc();
+
     this->question_display_panel->set_question(this->current_section_order, this->selected_questions.question[this->current_section_order]);
     this->questions_navigation_panel->refresh(this->current_section_order, this->selected_questions.question[this->current_section_order], this->result_doc);
 
@@ -161,4 +200,10 @@ void examFrame::on_options_on_question_display_clicked(wxCommandEvent& event)
     this->question_display_panel->enable_previous(!((this->selected_questions.question[this->current_section_order] == 1) and (this->current_section_order == 1)));
 
     this->question_display_panel->set_question(this->current_section_order, this->selected_questions.question[this->current_section_order]);
+}
+
+void inline examFrame::save_result_doc(void) {
+
+    this->result_doc.Save(this->test_starting_data.student_test_result_file);
+
 }

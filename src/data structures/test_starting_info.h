@@ -41,3 +41,11 @@ struct test_info {
         }
     }
 };
+
+struct data_to_save_in_result {
+    unsigned short int section_order = 0;
+    unsigned short int question_number = 0;
+    std::string question_status = "NaN"; //not visited
+    float time_spent = 0.0f; //in seconds
+    std::string answer = "NaN";
+};

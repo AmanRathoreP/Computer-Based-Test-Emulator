@@ -72,6 +72,9 @@ questionsPanel::questionsPanel(wxWindow *parent, test_info& test_starting_data, 
     this->text_input_answer = new customTextCtrl(this, wxID_ANY, wxString(""), wxDefaultPosition, wxSize(143, 39), 0);
     this->text_input_answer->SetHint("Ans...");
     this->text_input_answer->SetFont(wxFont(20, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD));
+    this->text_input_answer->Bind(wxEVT_TEXT, [this](wxCommandEvent& event) {
+        this->update_question_options();
+        });
     this->answer_options_sizer->Add(this->text_input_answer, 0, wxALIGN_CENTER_VERTICAL);
     
     std::vector<char> options = { 'A', 'B', 'C', 'D' };
@@ -101,6 +104,7 @@ questionsPanel::questionsPanel(wxWindow *parent, test_info& test_starting_data, 
 
 void questionsPanel::set_question(unsigned short int section_order, unsigned short int question_number) 
 {
+    this->question_time_tracker_timer = std::chrono::high_resolution_clock::now();
  
     this->current_section_order = section_order;
     this->current_question_number = question_number;
@@ -131,6 +135,13 @@ void questionsPanel::set_question(unsigned short int section_order, unsigned sho
         }
     }
 
+    wxString previous_answer = wxString(this->result_doc.GetCell<std::string>(get_column_index_by_name(this->result_doc, "answer"), question_row_number));
+    this->question_data.answer = previous_answer.ToStdString();
+    this->question_data.section_order = this->current_section_order;
+    this->question_data.question_number = this->current_question_number;
+    this->question_data.question_status = this->result_doc.GetCell<std::string>(get_column_index_by_name(this->result_doc, "question_status"), question_row_number);
+    if (this->question_data.question_status == "nv")
+        this->question_data.question_status = "n";
     std::string question_type = this->result_doc.GetCell<std::string>(3, find_row_number(this->result_doc, "section_order", std::to_string(this->current_section_order), "question_number", std::to_string(this->current_question_number)));
     if (question_type == "in") {
         //display entry box for integers
@@ -139,6 +150,10 @@ void questionsPanel::set_question(unsigned short int section_order, unsigned sho
         }
         this->text_input_answer->allow_float(false);
         this->text_input_answer->Show(true);
+        if (previous_answer != "NaN")
+        {
+            this->text_input_answer->SetValue(previous_answer);
+        }
     }
     else if (question_type == "fl") {
         //display entry box for floats
@@ -147,13 +162,22 @@ void questionsPanel::set_question(unsigned short int section_order, unsigned sho
         }
         this->text_input_answer->allow_float();
         this->text_input_answer->Show(true);
+        if (previous_answer != "NaN")
+        {
+            this->text_input_answer->SetValue(previous_answer);
+        }
     }
     else if (question_type == "sc") {
         //single correct
         this->reset_answer_options();
         for (auto* option : answer_options) {
             option->Show(true);
+            if ((previous_answer != "NaN") and (previous_answer.Find(option->GetLabel()) != wxNOT_FOUND))
+            {
+                option->set_selected();
+            }
         }
+        this->text_input_answer->Clear();
         this->text_input_answer->Show(false);
     }
     else if (question_type == "mc") {
@@ -161,9 +185,16 @@ void questionsPanel::set_question(unsigned short int section_order, unsigned sho
         this->reset_answer_options();
         for (auto* option : answer_options) {
             option->Show(true);
+            if ((previous_answer != "NaN") and (previous_answer.Find(option->GetLabel()) != wxNOT_FOUND))
+            {
+                option->set_selected();
+            }
         }
+        this->text_input_answer->Clear();
         this->text_input_answer->Show(false);
     }
+    
+    this->update_question_options();
 }
 
 void questionsPanel::on_section_changed(wxCommandEvent& event) {
@@ -245,10 +276,47 @@ void questionsPanel::on_question_option_clicked(wxCommandEvent& event)
     auto* pressed_button = dynamic_cast<wxButton*>(event.GetEventObject());
     if (pressed_button)
     {
+        this->question_data.section_order = this->current_section_order;
+        this->question_data.question_number = this->current_question_number;
+        
+        wxString button_name = pressed_button->GetLabel();
+
+        if (button_name == "SAVE && NEXT")
+        {
+            // button only enabled when atleast one answer is provided
+            this->question_data.answer = get_answer_of_current_question();
+            this->question_data.question_status = "a";
+        }
+        else if (button_name == "SAVE && MARK FOR REVIEW")
+        {
+            // button only enabled when atleast one answer is provided
+            this->question_data.answer = get_answer_of_current_question();
+            this->question_data.question_status = "ar";
+        }
+        else if (button_name == "CLEAR RESPONSE")
+        {
+            this->question_data.question_status = "n";
+            this->question_data.answer = "NaN";
+            this->set_question(this->current_section_order, this->current_question_number);
+        }
+        else if (button_name == "MARK FOR REVIEW && NEXT")
+        {
+            // button only enabled when no answer is provided
+            this->question_data.answer = "NaN";
+            this->question_data.question_status = "nr";
+        }
+        this->question_data.time_spent = this->get_time_spent_on_current_question();
+
         // Notify any listeners about the button click
         wxCommandEvent custom_event(QUESTION_OPTION_CLICKED, GetId());
-        custom_event.SetString(pressed_button->GetLabel()); // Set additional data if needed
+        custom_event.SetString(button_name); // Set additional data if needed
         GetEventHandler()->ProcessEvent(custom_event);
+
+        // Pretending like next is pressed so that we don't need to handle too much stuff in exam frame
+        if ((button_name == "SAVE && NEXT") or (button_name == "MARK FOR REVIEW && NEXT") or (button_name == "SAVE && MARK FOR REVIEW")){
+            custom_event.SetString("Next >>"); // Set additional data if needed
+            GetEventHandler()->ProcessEvent(custom_event);
+        }
     }
     event.Skip();
 }
@@ -277,6 +345,39 @@ void questionsPanel::on_answer_choosed(wxCommandEvent& event) {
             }
         }
         pressed_button->set_selected(not pressed_button->current_state);
+        this->update_question_options();
     }
     event.Skip();
+}
+
+std::string questionsPanel::get_answer_of_current_question(void)
+{
+    wxString answer = "";
+    for (auto *button : this->answer_options)
+    {
+        if (button->current_state)
+            answer.append(button->GetLabel()).append(',');
+    }
+
+    answer.append(this->text_input_answer->GetValue());
+
+    return answer.ToStdString();
+}
+
+void questionsPanel::update_question_options(void){
+    bool atleast_one_answer_provided = false;
+
+    for (auto* button : this->answer_options)
+        atleast_one_answer_provided = atleast_one_answer_provided || button->current_state;
+
+    atleast_one_answer_provided = atleast_one_answer_provided || !this->text_input_answer->GetValue().empty();
+
+    questions_options_buttons["SAVE & NEXT"]->Enable(atleast_one_answer_provided);
+    questions_options_buttons["SAVE & MARK FOR REVIEW"]->Enable(atleast_one_answer_provided);
+    questions_options_buttons["MARK FOR REVIEW & NEXT"]->Enable(!atleast_one_answer_provided);
+}
+
+float questionsPanel::get_time_spent_on_current_question(void) {
+    auto elapsedMilliseconds = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::high_resolution_clock::now() - this->question_time_tracker_timer).count();
+    return static_cast<float>(elapsedMilliseconds) / 1000.0f;
 }

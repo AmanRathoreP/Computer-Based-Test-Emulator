@@ -7,6 +7,7 @@
 #include "text_input_window.h"
 #include <unordered_map>
 #include <rapidcsv.h>
+#include <chrono>
 
 wxDECLARE_EVENT(SECTION_NAVIGATED, wxCommandEvent);
 wxDECLARE_EVENT(QUESTION_OPTION_CLICKED, wxCommandEvent);
@@ -19,6 +20,8 @@ public:
     void update_result_doc(rapidcsv::Document doc);
     void enable_next(bool enable = true);
     void enable_previous(bool enable = true);
+    data_to_save_in_result question_data;
+    float get_time_spent_on_current_question(void);
 
 private:
         test_info test_starting_data;
@@ -45,6 +48,9 @@ private:
         unsigned short int current_section_order = 1;
         unsigned short int current_question_number = 1;
 
+        std::string get_answer_of_current_question(void);
+        void update_question_options(void);
+        std::chrono::high_resolution_clock::time_point question_time_tracker_timer;
 
         wxDECLARE_EVENT_TABLE();
 };

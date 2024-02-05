@@ -48,5 +48,7 @@ private:
     };
     selected_questions_info selected_questions = selected_questions_info(1);
 
+    void inline save_result_doc(void);
+
     wxDECLARE_EVENT_TABLE();
 };
