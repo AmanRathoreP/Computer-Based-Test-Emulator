@@ -4,6 +4,7 @@
 #include "selectable_buttons.h"
 #include "basic_csv_functions.h"
 #include "custom_buttons.h"
+#include "text_input_window.h"
 #include <unordered_map>
 #include <rapidcsv.h>
 
@@ -38,7 +39,7 @@ private:
 
         wxBoxSizer* answer_options_sizer;
         std::vector<customButton*> answer_options;
-        wxTextCtrl* text_input_answer;
+        customTextCtrl* text_input_answer;
         void inline reset_answer_options(void);
         void on_answer_choosed(wxCommandEvent &event);
         unsigned short int current_section_order = 1;

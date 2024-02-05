@@ -69,7 +69,8 @@ questionsPanel::questionsPanel(wxWindow *parent, test_info& test_starting_data, 
     question_display_window->SetScrollRate(0, 20);
 
     this->answer_options_sizer = new wxBoxSizer(wxHORIZONTAL);
-    this->text_input_answer = new wxTextCtrl(this, wxID_ANY, wxString("Ans..."), wxDefaultPosition, wxSize(138, 39), 0);
+    this->text_input_answer = new customTextCtrl(this, wxID_ANY, wxString(""), wxDefaultPosition, wxSize(143, 39), 0);
+    this->text_input_answer->SetHint("Ans...");
     this->text_input_answer->SetFont(wxFont(20, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_BOLD));
     this->answer_options_sizer->Add(this->text_input_answer, 0, wxALIGN_CENTER_VERTICAL);
     
@@ -136,6 +137,7 @@ void questionsPanel::set_question(unsigned short int section_order, unsigned sho
         for (auto* option : answer_options) {
             option->Show(false);
         }
+        this->text_input_answer->allow_float(false);
         this->text_input_answer->Show(true);
     }
     else if (question_type == "fl") {
@@ -143,6 +145,7 @@ void questionsPanel::set_question(unsigned short int section_order, unsigned sho
         for (auto* option : answer_options) {
             option->Show(false);
         }
+        this->text_input_answer->allow_float();
         this->text_input_answer->Show(true);
     }
     else if (question_type == "sc") {
@@ -208,8 +211,6 @@ void inline questionsPanel::prepare_questions_options_buttons(void)
     questions_options_buttons["CLEAR RESPONSE"]->SetBackgroundColour(wxColor(199, 212, 202));
     questions_options_buttons["MARK FOR REVIEW & NEXT"]->SetBackgroundColour(wxColour(128, 0, 128));
     questions_options_buttons["MARK FOR REVIEW & NEXT"]->SetForegroundColour(wxColor(255, 255, 255));
-    // questions_options_buttons["<< Previous"]->SetBackgroundColour(wxColor(0, 0, 0));
-    // questions_options_buttons["Next >>"]->SetBackgroundColour(wxColor(0, 0, 0));
 
     float big_font_scaling_factor = 2.3f;
     float small_font_scaling_factor = 1.3f;
@@ -219,6 +220,17 @@ void inline questionsPanel::prepare_questions_options_buttons(void)
     questions_options_buttons["MARK FOR REVIEW & NEXT"]->SetFont(questions_options_buttons["MARK FOR REVIEW & NEXT"]->GetFont().Scale(big_font_scaling_factor));
     questions_options_buttons["<< Previous"]->SetFont(questions_options_buttons["<< Previous"]->GetFont().Scale(small_font_scaling_factor));
     questions_options_buttons["Next >>"]->SetFont(questions_options_buttons["Next >>"]->GetFont().Scale(small_font_scaling_factor));
+
+    for (auto& pair : this->questions_options_buttons) {
+        pair.second->Bind(wxEVT_ENTER_WINDOW, [this](wxMouseEvent& event) {
+            SetCursor(wxCursor(wxCURSOR_HAND));
+            }
+        );
+        pair.second->Bind(wxEVT_LEAVE_WINDOW, [this](wxMouseEvent& event) {
+            SetCursor(wxCursor(wxCURSOR_ARROW));
+            }
+        );
+    }
 
     //TODO deal with the case where only one question is there in the test
     this->enable_previous(false);
