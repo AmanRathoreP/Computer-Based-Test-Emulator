@@ -1,7 +1,7 @@
 #include "question_number_button.h"
 
 questionNumberButton::questionNumberButton(wxWindow *parent, int id, const wxString &label)
-    : wxButton(parent, id, label), current_state(not_visited)
+    : wxButton(parent, id, label), current_state("nv")
 {
     SetMinSize(wxSize(51, 51));
     SetFont(wxFont(25, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_THIN));
@@ -9,9 +9,9 @@ questionNumberButton::questionNumberButton(wxWindow *parent, int id, const wxStr
     Bind(wxEVT_LEAVE_WINDOW, &questionNumberButton::on_button_leave, this);
 }
 
-void questionNumberButton::set_state(button_states state)
+void questionNumberButton::set_state(std::string state)
 {
-    current_state = state;
+    this->current_state = state;
     update_button_appearance();
 }
 
@@ -29,29 +29,31 @@ void questionNumberButton::set_glow(bool glow)
 
 void questionNumberButton::update_button_appearance()
 {
-    switch (current_state)
+    if (this->current_state == "nv")
     {
-    case not_visited:
         set_color(wxColour(255, 255, 255));
         make_circle(false);
-        break;
-    case answered:
-        set_color(wxColour(0, 255, 0));
-        make_circle(false);
-        break;
-    case not_answered:
+    }
+    else if (this->current_state == "n")
+    {
         set_color(wxColour(255, 0, 0));
         make_circle(false);
-        break;
-    case answered_and_marked_for_review:
+    }
+    else if (this->current_state == "ar")
+    {
         set_color(wxColour(0, 255, 0));
         make_circle(true);
         set_boundary_color(wxColour(128, 0, 128));
-        break;
-    case not_answered_but_marked_for_review:
+    }
+    else if (this->current_state == "a")
+    {
+        set_color(wxColour(0, 255, 0));
+        make_circle(false);
+    }
+    else if (this->current_state == "nr")
+    {
         set_color(wxColour(128, 0, 128));
         make_circle(true);
-        break;
     }
 }
 

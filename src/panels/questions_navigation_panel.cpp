@@ -101,5 +101,10 @@ void questionsNavigationPanel::refresh(unsigned short int section_order, unsigne
             button->selected(true);
         else
             button->selected(false);
+        try
+        {
+            button->set_state(doc.GetCell<std::string>(get_column_index_by_name(doc, "question_status"), find_row_number(doc, "section_order", std::to_string(section_order), "question_number", button->GetLabel().ToStdString())));
+        }
+        catch (const std::exception&){}
     }
 }

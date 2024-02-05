@@ -113,7 +113,7 @@ void examFrame::on_question_navigated(wxCommandEvent &event)
     }
 
     this->question_display_panel->set_question(this->current_section_order, this->selected_questions.question[this->current_section_order]);
-
+    this->questions_navigation_panel->refresh(this->current_section_order, this->selected_questions.question[this->current_section_order], this->result_doc);
 
     this->question_display_panel->enable_next(!((this->selected_questions.question[this->current_section_order] == this->test_starting_data.sections[this->test_starting_data.number_of_sections - 1].number_of_questions) and (this->current_section_order == this->test_starting_data.number_of_sections)));
     this->question_display_panel->enable_previous(!((this->selected_questions.question[this->current_section_order] == 1) and (this->current_section_order == 1)));
