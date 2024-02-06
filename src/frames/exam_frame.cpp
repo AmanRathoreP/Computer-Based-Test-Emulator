@@ -96,8 +96,6 @@ wxString examFrame::formatted_exam_time(void)
 
 void examFrame::on_question_navigated(wxCommandEvent &event)
 {
-    if (this->selected_questions.question[this->current_section_order] == event.GetInt())
-        return;
 
     this->selected_questions.question[this->current_section_order] = event.GetInt();
 
@@ -124,9 +122,7 @@ void examFrame::on_question_navigated(wxCommandEvent &event)
 
 void examFrame::on_section_navigated(wxCommandEvent& event)
 {
-    if (this->current_section_order == event.GetInt())
-        return;
-
+ 
     this->current_section_order = event.GetInt();
 
     data_to_save_in_result question_data = this->question_display_panel->question_data;

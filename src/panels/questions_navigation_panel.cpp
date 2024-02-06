@@ -23,7 +23,7 @@ questionsNavigationPanel::questionsNavigationPanel(wxWindow* parent, unsigned sh
         // Create buttons and add them to the grid sizer
         for (int i = 1; i <= max_number_of_questions_per_section; i++)
         {
-            auto* button = new questionNumberButton(this, wxID_ANY, wxString::Format("%d", i));
+            auto* button = new questionNumberButton(this, wxID_ANY, wxString::Format("%d", i), this->GetBackgroundColour());
             buttons.push_back(button);
             this->grid_sizer->Add(button, 0, wxEXPAND | wxALL, 5);
     }
@@ -74,37 +74,16 @@ void questionsNavigationPanel::refresh(unsigned short int section_order, unsigne
 
     if (visible_buttons > number_of_questions) {
         for (unsigned short int i = visible_buttons; i > number_of_questions; i--)
-        {
-            /*
-            this->grid_sizer->Remove(wxAtoi(buttons[i - 1]->GetLabel()) - 1);
-            buttons.erase(buttons.begin() + i - 1);
-             buttons[i - 1]->Destroy();
-             */
             buttons[i - 1]->Show(false);
-        }
     }
     else if ((visible_buttons < number_of_questions)) {
         for (unsigned short int i = visible_buttons; i < number_of_questions; i++)
-        {
-            /*
-         auto* button = new questionNumberButton(this, wxID_ANY, wxString::Format("%d", i));
-            buttons.push_back(button);
-        this->grid_sizer->Add(button, 0, wxEXPAND | wxALL, 5);
-        */
             buttons[i]->Show();
-        }
     }
 
     for (auto* button : buttons) {
-        //TODO also check state of the question and update accordingly
-        if (wxAtoi(button->GetLabel()) == selected_question)
-            button->selected(true);
-        else
-            button->selected(false);
-        try
-        {
-            button->set_state(doc.GetCell<std::string>(get_column_index_by_name(doc, "question_status"), find_row_number(doc, "section_order", std::to_string(section_order), "question_number", button->GetLabel().ToStdString())));
-        }
-        catch (const std::exception&){}
+        button->selected(wxAtoi(button->GetLabel()) == selected_question);
+        button->set_state(doc.GetCell<std::string>(get_column_index_by_name(doc, "question_status"), find_row_number(doc, "section_order", std::to_string(section_order), "question_number", button->GetLabel().ToStdString())));
+        button->Refresh();
     }
 }
