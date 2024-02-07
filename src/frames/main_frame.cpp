@@ -144,7 +144,20 @@ bool mainFrame::check_weather_test_file_is_fit(const wxString &test_file_locatio
     }
 
     // TODO set an options in settings to eliminate hard coding of the location of result file
-    this->test_starting_data.student_test_result_file = wxString(test_questions_details_file.ToStdString()).Truncate(test_questions_details_file.length() - wxString("test_questions.csv").length()).append("result.csv");
+    wxString result_file_name = "";
+    try
+    {
+        wxInitializer initializer;
+        wxDateTime currentTime = wxDateTime::Now();
+        result_file_name = this->test_starting_data.test_name + currentTime.Format(" result, %Y-%m-%d %H-%M-%S.csv");
+    }
+    catch (const std::exception&)
+    {
+        wxLogError("Failed to initialize wxWidgets.");
+        result_file_name = this->test_starting_data.test_name + " result, --no_data-- test.csv";
+    }
+
+    this->test_starting_data.student_test_result_file = wxString(test_questions_details_file.ToStdString()).Truncate(test_questions_details_file.length() - wxString("test_questions.csv").length()).append(result_file_name);
     auto test_questions_details_status = this->read_csv_file(test_questions_details_file.ToStdString());
     
     if (test_questions_details_status == 1)

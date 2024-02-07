@@ -11,8 +11,7 @@ wxEND_EVENT_TABLE()
 questionsPanel::questionsPanel(wxWindow *parent, test_info& test_starting_data, rapidcsv::Document doc) : wxPanel(parent, wxID_ANY), test_starting_data(test_starting_data)
 {
 
-    wxPNGHandler* handler = new wxPNGHandler;
-    wxImage::AddHandler(handler);
+    wxInitAllImageHandlers();
 
     this->result_doc = doc;
 
@@ -102,19 +101,25 @@ questionsPanel::questionsPanel(wxWindow *parent, test_info& test_starting_data, 
     this->set_question(1, 1);
 }
 
-void questionsPanel::set_question(unsigned short int section_order, unsigned short int question_number) 
+void questionsPanel::set_question(unsigned short int section_order, unsigned short int question_number, bool reset_time) 
 {
-    this->question_time_tracker_timer = std::chrono::high_resolution_clock::now();
+    if (reset_time)
+        this->question_time_tracker_timer = std::chrono::high_resolution_clock::now();
  
     this->current_section_order = section_order;
     this->current_question_number = question_number;
 
     unsigned short int question_row_number = find_row_number(this->result_doc, "section_order", std::to_string(section_order), "question_number", std::to_string(question_number));
 
-    wxImage question_image;
-    question_image.LoadFile(
-        wxString(this->test_starting_data.student_test_result_file).Truncate(this->test_starting_data.student_test_result_file.length() - wxString("result.csv").length()).append(this->result_doc.GetCell<std::string>(0, question_row_number))
-    );
+#ifdef __WXMSW__  // Windows
+    wxChar __path_separator = '\\';
+#else
+    wxChar __path_separator = '/';
+#endif
+
+    wxImage question_image = wxImage(
+        (wxString(this->test_starting_data.student_test_result_file).Left(wxString(this->test_starting_data.student_test_result_file).Last(__path_separator))).append(__path_separator).append(this->result_doc.GetCell<std::string>(0, question_row_number))
+        , wxBITMAP_TYPE_JPEG);
 
     unsigned short int max_width = this->question_display_sizer->GetSize().GetWidth() * 0.95;
     unsigned short int max_height = this->question_display_sizer->GetSize().GetHeight() * 0.95;
@@ -297,7 +302,9 @@ void questionsPanel::on_question_option_clicked(wxCommandEvent& event)
         {
             this->question_data.question_status = "n";
             this->question_data.answer = "NaN";
-            this->set_question(this->current_section_order, this->current_question_number);
+            this->set_question(this->current_section_order, this->current_question_number, false);
+            this->question_data.question_status = "n";
+            this->question_data.answer = "NaN";
         }
         else if (button_name == "MARK FOR REVIEW && NEXT")
         {
@@ -314,7 +321,7 @@ void questionsPanel::on_question_option_clicked(wxCommandEvent& event)
 
         // Pretending like next is pressed so that we don't need to handle too much stuff in exam frame
         if ((button_name == "SAVE && NEXT") or (button_name == "MARK FOR REVIEW && NEXT") or (button_name == "SAVE && MARK FOR REVIEW")){
-            custom_event.SetString("Next >>"); // Set additional data if needed
+            custom_event.SetString(questions_options_buttons["Next >>"]->IsEnabled() ? "Next >>" : ""); // Set additional data if needed
             GetEventHandler()->ProcessEvent(custom_event);
         }
     }

@@ -16,7 +16,7 @@ class questionsPanel : public wxPanel
 {
 public:
     questionsPanel(wxWindow *, test_info&, rapidcsv::Document doc);
-    void set_question(unsigned short int, unsigned short int);
+    void set_question(unsigned short int, unsigned short int, bool reset_time = true);
     void update_result_doc(rapidcsv::Document doc);
     void enable_next(bool enable = true);
     void enable_previous(bool enable = true);
