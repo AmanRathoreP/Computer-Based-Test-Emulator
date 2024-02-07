@@ -6,14 +6,15 @@ EVT_LEFT_DOWN(questionNumberButton::OnLeftDown)
 EVT_LEFT_UP(questionNumberButton::OnLeftUp)
 wxEND_EVENT_TABLE()
 
-questionNumberButton::questionNumberButton(wxWindow* parent, int id, const wxString& label, wxColor camouflage_color)
-    : wxButton(parent, id, label), camouflage_color(camouflage_color)
+questionNumberButton::questionNumberButton(wxWindow* parent, int id, const wxString& label, wxColor camouflage_color, std::string current_state)
+    : wxButton(parent, id, label), camouflage_color(camouflage_color), current_state(current_state)
 {
     this->SetBackgroundColour(camouflage_color);
     SetMinSize(wxSize(51, 51));
     SetFont(wxFont(25, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_THIN));
     Bind(wxEVT_ENTER_WINDOW, &questionNumberButton::on_button_enter, this);
     Bind(wxEVT_LEAVE_WINDOW, &questionNumberButton::on_button_leave, this);
+    update_button_appearance();
 }
 
 void questionNumberButton::set_state(std::string state)
@@ -33,7 +34,7 @@ void questionNumberButton::update_button_appearance()
     else if (this->current_state == "n")
     {
         this->background_color = wxColour(255, 0, 0);
-        this->border_color = wxColor(0, 0, 0);
+        this->border_color = wxColor(255, 0, 0);
         make_circle(false);
     }
     else if (this->current_state == "ar")
@@ -50,8 +51,8 @@ void questionNumberButton::update_button_appearance()
     }
     else if (this->current_state == "nr")
     {
-        this->background_color = wxColour(128, 0, 128);
-        this->border_color = wxColor(255, 0, 0);
+        this->background_color = wxColor(255, 0, 0);
+        this->border_color = wxColour(128, 0, 128);
         make_circle(true);
     }
 }
@@ -105,7 +106,7 @@ void questionNumberButton::OnLeftUp(wxMouseEvent& event)
     event.Skip();
 }
 
-void questionNumberButton::OnPaint(wxPaintEvent& event) 
+void questionNumberButton::OnPaint(wxPaintEvent& event)
 {
     wxPaintDC dc(this);
     wxCoord width, height;
@@ -115,7 +116,7 @@ void questionNumberButton::OnPaint(wxPaintEvent& event)
 
     // Draw a ellipse or rectangle based on the current state
     dc.SetBrush(wxBrush(this->background_color));
-    dc.SetPen(wxPen(this->border_color, 7));
+    dc.SetPen(wxPen(this->border_color, 9));
 
     float scaling_factor = 0.9f; //must be less than or equal to 1
     if (this->is_pressed)
@@ -132,6 +133,8 @@ void questionNumberButton::OnPaint(wxPaintEvent& event)
     // Draw button label
     dc.SetTextForeground(*wxBLACK);
     dc.SetFont(GetFont());
-    wxSize labelSize = dc.GetTextExtent(GetLabel());
-    dc.DrawText(GetLabel(), (width - labelSize.GetWidth()) / 2, (height - labelSize.GetHeight()) / 2);
+    wxString labelText = this->use_label_value ? wxString::Format("%d", this->label_value) : GetLabel();
+    wxSize labelSize = dc.GetTextExtent(labelText);
+
+    dc.DrawText(labelText, (width - labelSize.GetWidth()) / 2, (height - labelSize.GetHeight()) / 2);
 }

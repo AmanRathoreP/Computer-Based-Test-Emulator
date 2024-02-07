@@ -26,6 +26,7 @@ private:
     questionsNavigationPanel *questions_navigation_panel;
     questionsPanel *question_display_panel;
     sectionInfoPanel *questions_info_panel;
+    sectionInfoPanel *exam_questions_info;
 
     wxTimer *exam_timer; // resolution = 1 second
     wxStaticText *exam_timer_display;
@@ -49,6 +50,8 @@ private:
     selected_questions_info selected_questions = selected_questions_info(1);
 
     void inline save_result_doc(void);
+
+    std::vector<unsigned short int>all_sections_order;
 
     wxDECLARE_EVENT_TABLE();
 };

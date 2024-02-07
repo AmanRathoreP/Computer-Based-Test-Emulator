@@ -14,6 +14,9 @@ wxBEGIN_EVENT_TABLE(examFrame, wxFrame)
     this->result_doc = rapidcsv::Document(this->test_starting_data.student_test_result_file);
     this->selected_questions = selected_questions_info(this->test_starting_data.number_of_sections);
 
+    for (unsigned short int __section_order = 1; __section_order <= this->test_starting_data.number_of_sections; __section_order++)
+        this->all_sections_order.push_back(__section_order);
+
     wxGridBagSizer *grid_bag_sizer = new wxGridBagSizer(0, 0);
 
     auto __background_color = wxColor(235, 237, 237);
@@ -30,6 +33,11 @@ wxBEGIN_EVENT_TABLE(examFrame, wxFrame)
 
     this->questions_info_panel = new sectionInfoPanel(this);
     questions_info_panel->SetBackgroundColour(__background_color);
+    questions_info_panel->update_data(this->result_doc, { 1 });
+    
+    this->exam_questions_info = new sectionInfoPanel(this->test_info_panel);
+    exam_questions_info->SetBackgroundColour(__background_color);
+    exam_questions_info->update_data(this->result_doc, this->all_sections_order);
 
     // Add panels to the grid bag sizer
     static float __x_stretch = 19.48f;
@@ -49,9 +57,9 @@ wxBEGIN_EVENT_TABLE(examFrame, wxFrame)
     exam_timer = new wxTimer(this, this->ID_timer);
     exam_timer->Start(1000);
 
-    test_info_panel->SetSizer(new wxBoxSizer(wxVERTICAL));
-    test_info_panel->GetSizer()->AddStretchSpacer();
-    test_info_panel->GetSizer()->Add(this->exam_timer_display, 0, wxALIGN_RIGHT | wxALL, 10);
+    test_info_panel->SetSizer(new wxGridSizer(1,2, 5,5));
+    test_info_panel->GetSizer()->Add(this->exam_questions_info, 0, wxALIGN_LEFT | wxALIGN_TOP, 10);
+    test_info_panel->GetSizer()->Add(this->exam_timer_display, 0, wxALIGN_RIGHT | wxALIGN_BOTTOM, 10);
 }
 
 void examFrame::OnTimer(wxTimerEvent &event)
@@ -112,6 +120,8 @@ void examFrame::on_question_navigated(wxCommandEvent &event)
 
     this->question_display_panel->set_question(this->current_section_order, this->selected_questions.question[this->current_section_order]);
     this->questions_navigation_panel->refresh(this->current_section_order, this->selected_questions.question[this->current_section_order], this->result_doc);
+    this->questions_info_panel->update_data(this->result_doc, { this->current_section_order });
+    this->exam_questions_info->update_data(this->result_doc, this->all_sections_order);
 
     this->question_display_panel->enable_next(!((this->selected_questions.question[this->current_section_order] == this->test_starting_data.sections[this->test_starting_data.number_of_sections - 1].number_of_questions) and (this->current_section_order == this->test_starting_data.number_of_sections)));
     this->question_display_panel->enable_previous(!((this->selected_questions.question[this->current_section_order] == 1) and (this->current_section_order == 1)));
@@ -138,7 +148,8 @@ void examFrame::on_section_navigated(wxCommandEvent& event)
 
     this->question_display_panel->set_question(this->current_section_order, this->selected_questions.question[this->current_section_order]);
     this->questions_navigation_panel->refresh(this->current_section_order, this->selected_questions.question[this->current_section_order], this->result_doc);
-
+    this->questions_info_panel->update_data(this->result_doc, { this->current_section_order });
+    this->exam_questions_info->update_data(this->result_doc, this->all_sections_order);
 
     this->question_display_panel->enable_next(!((this->selected_questions.question[this->current_section_order] == this->test_starting_data.sections[this->test_starting_data.number_of_sections - 1].number_of_questions) and (this->current_section_order == this->test_starting_data.number_of_sections)));
     this->question_display_panel->enable_previous(!((this->selected_questions.question[this->current_section_order] == 1) and (this->current_section_order == 1)));
@@ -190,7 +201,8 @@ void examFrame::on_options_on_question_display_clicked(wxCommandEvent& event)
 
     this->question_display_panel->set_question(this->current_section_order, this->selected_questions.question[this->current_section_order]);
     this->questions_navigation_panel->refresh(this->current_section_order, this->selected_questions.question[this->current_section_order], this->result_doc);
-
+    this->questions_info_panel->update_data(this->result_doc, { this->current_section_order });
+    this->exam_questions_info->update_data(this->result_doc, this->all_sections_order);
 
     this->question_display_panel->enable_next(!((this->selected_questions.question[this->current_section_order] == this->test_starting_data.sections[this->test_starting_data.number_of_sections - 1].number_of_questions) and (this->current_section_order == this->test_starting_data.number_of_sections)));
     this->question_display_panel->enable_previous(!((this->selected_questions.question[this->current_section_order] == 1) and (this->current_section_order == 1)));
