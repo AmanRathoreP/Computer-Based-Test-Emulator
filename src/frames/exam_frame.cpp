@@ -59,7 +59,14 @@ wxBEGIN_EVENT_TABLE(examFrame, wxFrame)
 
     test_info_panel->SetSizer(new wxGridSizer(1,2, 5,5));
     test_info_panel->GetSizer()->Add(this->exam_questions_info, 0, wxALIGN_LEFT | wxALIGN_TOP, 10);
-    test_info_panel->GetSizer()->Add(this->exam_timer_display, 0, wxALIGN_RIGHT | wxALIGN_BOTTOM, 10);
+    auto* test_action_sizer = new wxBoxSizer(wxVERTICAL);
+
+    this->prepare_test_actions_buttons();
+
+    test_action_sizer->Add(this->end_button, 0, wxALIGN_RIGHT | wxALIGN_TOP | wxEXPAND, 10);
+    test_action_sizer->Add(this->halt_button, 0, wxALIGN_RIGHT | wxALIGN_TOP | wxEXPAND, 10);
+    test_action_sizer->Add(this->exam_timer_display, 0, wxALIGN_RIGHT | wxALIGN_BOTTOM, 10);
+    test_info_panel->GetSizer()->Add(test_action_sizer, 0, wxALIGN_RIGHT | wxALIGN_BOTTOM, 10);
 }
 
 void examFrame::OnTimer(wxTimerEvent &event)
@@ -81,7 +88,7 @@ void examFrame::OnTimer(wxTimerEvent &event)
         // Stop the timer
         this->exam_timer->Stop();
         // End the exam
-        wxMessageBox("Exam time is over", "Time's up!", wxOK | wxICON_WARNING);
+        this->finish_test();
     }
 }
 
@@ -214,4 +221,54 @@ void inline examFrame::save_result_doc(void) {
 
     this->result_doc.Save(this->test_starting_data.student_test_result_file);
 
+}
+
+void inline examFrame::prepare_test_actions_buttons(void) {
+    this->end_button = new wxButton(this->test_info_panel, wxID_ANY, "Capitulate");
+    this->halt_button = new wxButton(this->test_info_panel, wxID_ANY, "Halt");
+
+    this->end_button->Bind(wxEVT_ENTER_WINDOW, [this](wxMouseEvent& event) {
+        SetCursor(wxCursor(wxCURSOR_HAND));
+        }
+    );
+    this->end_button->Bind(wxEVT_LEAVE_WINDOW, [this](wxMouseEvent& event) {
+        SetCursor(wxCursor(wxCURSOR_ARROW)); 
+        }
+    );
+    this->halt_button->Bind(wxEVT_ENTER_WINDOW, [this](wxMouseEvent& event) {
+        SetCursor(wxCursor(wxCURSOR_HAND)); 
+        }
+    );
+    this->halt_button->Bind(wxEVT_LEAVE_WINDOW, [this](wxMouseEvent& event) {
+        SetCursor(wxCursor(wxCURSOR_ARROW)); 
+        }
+    );
+
+
+    this->end_button->SetFont(this->end_button->GetFont().Scale(3.3f));
+    this->halt_button->SetFont(this->halt_button->GetFont().Scale(3.3f));
+
+    this->end_button->SetBackgroundColour(wxColor(99, 255, 123));
+    this->halt_button->SetBackgroundColour(wxColor(135, 178, 237));
+
+    this->end_button->SetToolTip("Submit test");
+    this->halt_button->SetToolTip("Pause test for now");
+
+    this->end_button->Bind(wxEVT_BUTTON, &examFrame::capitulate, this);
+    this->halt_button->Bind(wxEVT_BUTTON, &examFrame::halt_test, this);
+
+}
+
+void inline examFrame::finish_test(bool times_up) {
+    if (times_up)
+        wxMessageBox("Test is submited.", "Time's up!", wxOK | wxICON_INFORMATION);
+    else if (!wxMessageBox("You won't be able to resume test later\nAre you sure you want to end test?", "You sure?", wxYES | wxICON_WARNING))
+        return;
+
+    this->Close(true);
+}
+
+void inline examFrame::halt_test(wxCommandEvent& event) {
+    wxMessageBox("Halting facility will be implemented soon!",
+        "No Feature Found", wxOK | wxICON_ERROR);
 }

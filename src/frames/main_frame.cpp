@@ -3,6 +3,7 @@
 mainFrame::mainFrame(const wxString& title) : wxFrame(nullptr, wxID_ANY, title) {
     wxMenu* menu_advance = new wxMenu;
     menu_advance->Append(ID_load_test, "&Load Test\tCtrl+L");
+    menu_advance->Append(ID_resume_test, "&Resume Test\tCtrl+H");
     menu_advance->Append(ID_create_test, "&Create Test\tCtrl+N");
     menu_advance->AppendSeparator();
     menu_advance->Append(wxID_EXIT, "&Close\tCtrl+W");
@@ -46,6 +47,7 @@ mainFrame::mainFrame(const wxString& title) : wxFrame(nullptr, wxID_ANY, title) 
     Bind(wxEVT_MENU, &mainFrame::on_exit_clicked, this, wxID_EXIT);
     Bind(wxEVT_MENU, &mainFrame::on_create_test_clicked, this, ID_create_test);
     Bind(wxEVT_MENU, &mainFrame::on_load_test_clicked, this, ID_load_test);
+    Bind(wxEVT_MENU, &mainFrame::on_resume_test_clicked, this, ID_resume_test);
     this->start_test_button->Bind(wxEVT_BUTTON, &mainFrame::on_start_test_clicked, this);
 }
 
@@ -206,6 +208,7 @@ std::string mainFrame::generate_html_to_display_test_info()
 void mainFrame::on_start_test_clicked(wxCommandEvent& event)
 {
     this->start_test_button->Enable(false);
+    this->test_info_display->SetPage("<html><body><h1>Load test via <i>Options > Load Test </i>!</h1><br><h1>Create new test via <i>Options > Create Test </i>!</h1></body></html>");
     auto* exam_frame = new examFrame(this->test_starting_data);
     exam_frame->ShowFullScreen(true);
 }
@@ -252,4 +255,10 @@ unsigned short int mainFrame::read_csv_file(const std::string &file_path)
     doc.Save(this->test_starting_data.student_test_result_file);
 
     return 3; // Data reading successfully completed
+}
+
+void mainFrame::on_resume_test_clicked(wxCommandEvent& event)
+{
+    wxMessageBox("The facility will be implemented soon!",
+        "No Feature Found", wxOK | wxICON_ERROR);
 }

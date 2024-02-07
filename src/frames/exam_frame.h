@@ -52,6 +52,14 @@ private:
     void inline save_result_doc(void);
 
     std::vector<unsigned short int>all_sections_order;
+    void inline prepare_test_actions_buttons(void);
+    wxButton* end_button;
+    wxButton* halt_button;
+    void inline finish_test(bool times_up = true);
+    void inline halt_test(wxCommandEvent& event);
+    void inline capitulate(wxCommandEvent& event) {
+        finish_test(false);
+    }
 
     wxDECLARE_EVENT_TABLE();
 };

@@ -17,6 +17,7 @@ public:
         ID_create_test = 1,
         ID_about_author = 2,
         ID_load_test = 3,
+        ID_resume_test = 4,
     };
 
     struct test_info test_starting_data;
@@ -27,6 +28,7 @@ private:
     void on_about_author_clicked(wxCommandEvent& event);
     void on_create_test_clicked(wxCommandEvent& event);
     void on_load_test_clicked(wxCommandEvent& event);
+    void on_resume_test_clicked(wxCommandEvent& event);
     void check_weather_all_ther_required_files_are_avaliable_in_folder(const wxString&);
     bool check_weather_test_file_is_fit(const wxString&, const wxString&);
     unsigned short int read_json_file(const std::string&);
