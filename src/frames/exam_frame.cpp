@@ -265,6 +265,10 @@ void inline examFrame::finish_test(bool times_up) {
     else if (!wxMessageBox("You won't be able to resume test later\nAre you sure you want to end test?", "You sure?", wxYES | wxICON_WARNING))
         return;
 
+    std::string html_file_location_with_name = this->test_starting_data.student_test_result_file;
+    html_file_location_with_name.replace(html_file_location_with_name.find(".csv"), sizeof(".csv") - 1, ".html");
+    htmlGenerator().create_test_summary(this->result_doc, html_file_location_with_name, this->test_starting_data);
+
     this->Close(true);
 }
 
