@@ -269,6 +269,10 @@ void inline examFrame::finish_test(bool times_up) {
     html_file_location_with_name.replace(html_file_location_with_name.find(".csv"), sizeof(".csv") - 1, ".html");
     htmlGenerator().create_test_summary(this->result_doc, html_file_location_with_name, this->test_starting_data);
 
+    html_file_location_with_name = this->test_starting_data.student_test_result_file;
+    html_file_location_with_name.replace(html_file_location_with_name.find(".csv"), sizeof(".csv") - 1, "(Detailed Analysis).html"); 
+    htmlGenerator().create_detailed_test_analysis(this->result_doc, html_file_location_with_name, this->test_starting_data);
+
     this->Close(true);
 }
 
