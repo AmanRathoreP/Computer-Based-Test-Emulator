@@ -77,6 +77,10 @@ void examFrame::OnTimer(wxTimerEvent &event)
     this->exam_timer_display->SetLabel(formatted_exam_time());
 
     // Check if the specific time is reached
+    if (this->exam_remaining_time <= this->test_starting_data.warning_time)
+    {
+        this->exam_timer_display->SetForegroundColour(wxColor(154, 133, 48));
+    }
     if (this->exam_remaining_time <= this->test_starting_data.threshold_time)
     {
         this->exam_timer_display->SetForegroundColour(wxColor(255, 40, 40));

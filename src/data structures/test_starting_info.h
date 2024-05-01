@@ -20,6 +20,7 @@ struct test_section_info {
 struct test_info {
     unsigned int duration; // in seconds
     unsigned int threshold_time; // in seconds
+    unsigned int warning_time;   // in seconds
     std::string test_name;
     std::string test_description;
     std::string student_test_result_file;
@@ -31,6 +32,7 @@ struct test_info {
         sections = new test_section_info[number_of_sections];
         duration = json_data.get("duration", 0).asUInt();
         threshold_time = json_data.get("threshold time", 0).asUInt();
+        warning_time = json_data.get("warning time", 0).asUInt();
         test_name = json_data.get("test name", "no name provided").asString();
         test_description = json_data.get("test description", "no test description provided").asString();
 
