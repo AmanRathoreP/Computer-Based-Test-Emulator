@@ -30,6 +30,11 @@ void progressBar::OnPaint(wxPaintEvent &event)
     
     dc.SetBrush(wxBrush(color_to_use));
     dc.DrawRectangle(wxRect(0, 0, (int)(width * (((float)this->current_val) / (this->max_val))), height));
+
+    for (const auto& indicator : this->color_range_for_values) {
+        dc.SetBrush(wxBrush(indicator.second));
+        dc.DrawRectangle(wxRect((width * (((float)indicator.first) / this->max_val))-(this->indicator_width/2), 0, this->indicator_width, height));
+    }
 }
 
 void progressBar::update(unsigned int val)

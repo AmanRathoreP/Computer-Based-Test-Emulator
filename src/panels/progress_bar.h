@@ -11,6 +11,7 @@ public:
 private:
     unsigned int max_val;
     unsigned int current_val = 0;
+    unsigned short int indicator_width = 6;
     std::map<unsigned int, wxColor> color_range_for_values;
 
     void OnPaint(wxPaintEvent &event);
