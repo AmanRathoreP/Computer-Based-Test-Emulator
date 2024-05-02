@@ -38,6 +38,7 @@
     <ClCompile Include="src\others\question_number_button.cpp" />
     <ClCompile Include="src\others\selectable_buttons.cpp" />
     <ClCompile Include="src\others\text_input_window.cpp" />
+    <ClCompile Include="src\panels\progress_bar.cpp" />
     <ClCompile Include="src\panels\questions_navigation_panel.cpp" />
     <ClCompile Include="src\panels\questions_panel.cpp" />
     <ClCompile Include="src\panels\section_info_panel.cpp" />
@@ -54,6 +55,7 @@
     <ClInclude Include="src\others\question_number_button.h" />
     <ClInclude Include="src\others\selectable_buttons.h" />
     <ClInclude Include="src\others\text_input_window.h" />
+    <ClInclude Include="src\panels\progress_bar.h" />
     <ClInclude Include="src\panels\questions_navigation_panel.h" />
     <ClInclude Include="src\panels\questions_panel.h" />
     <ClInclude Include="src\panels\section_info_panel.h" />

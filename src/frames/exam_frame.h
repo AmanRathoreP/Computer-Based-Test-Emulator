@@ -2,6 +2,7 @@
 #include "main_frame.h"
 #include "test_starting_info.h"
 #include "./../panels/questions_panel.h"
+#include "./../panels/progress_bar.h"
 #include "./../panels/questions_navigation_panel.h"
 #include "./../panels/section_info_panel.h"
 #include "./../panels/test_info_panel.h"
@@ -31,6 +32,7 @@ private:
 
     wxTimer *exam_timer; // resolution = 1 second
     wxStaticText *exam_timer_display;
+    progressBar *progress_bar_panel;
     test_info test_starting_data;
     wxString formatted_exam_time(void);
 

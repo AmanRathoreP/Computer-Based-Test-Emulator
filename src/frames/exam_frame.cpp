@@ -57,8 +57,14 @@ wxBEGIN_EVENT_TABLE(examFrame, wxFrame)
     exam_timer = new wxTimer(this, this->ID_timer);
     exam_timer->Start(1000);
 
-    test_info_panel->SetSizer(new wxGridSizer(1,2, 5,5));
+    test_info_panel->SetSizer(new wxGridSizer(1, 3, 5, 5));
     test_info_panel->GetSizer()->Add(this->exam_questions_info, 0, wxALIGN_LEFT | wxALIGN_TOP, 10);
+
+
+    this->progress_bar_panel = new progressBar(test_info_panel, wxSize(500, 100), this->test_starting_data.duration, { {this->test_starting_data.warning_time, wxColor(154, 133, 48)}, {this->test_starting_data.threshold_time, wxColor(255, 40, 40)} });
+    test_info_panel->GetSizer()->Add(this->progress_bar_panel, 0, wxEXPAND | wxALIGN_CENTER, 10);
+
+
     auto* test_action_sizer = new wxBoxSizer(wxVERTICAL);
 
     this->prepare_test_actions_buttons();
@@ -66,6 +72,7 @@ wxBEGIN_EVENT_TABLE(examFrame, wxFrame)
     test_action_sizer->Add(this->end_button, 0, wxALIGN_RIGHT | wxALIGN_TOP | wxEXPAND, 10);
     test_action_sizer->Add(this->halt_button, 0, wxALIGN_RIGHT | wxALIGN_TOP | wxEXPAND, 10);
     test_action_sizer->Add(this->exam_timer_display, 0, wxALIGN_RIGHT | wxALIGN_BOTTOM, 10);
+
     test_info_panel->GetSizer()->Add(test_action_sizer, 0, wxALIGN_RIGHT | wxALIGN_BOTTOM, 10);
 }
 
@@ -74,6 +81,7 @@ void examFrame::OnTimer(wxTimerEvent &event)
 
     this->exam_remaining_time--;
 
+    this->progress_bar_panel->update(this->test_starting_data.duration - this->exam_remaining_time);
     this->exam_timer_display->SetLabel(formatted_exam_time());
 
     // Check if the specific time is reached
