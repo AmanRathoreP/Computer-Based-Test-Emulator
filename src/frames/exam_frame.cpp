@@ -60,9 +60,14 @@ wxBEGIN_EVENT_TABLE(examFrame, wxFrame)
     test_info_panel->SetSizer(new wxGridSizer(1, 3, 5, 5));
     test_info_panel->GetSizer()->Add(this->exam_questions_info, 0, wxALIGN_LEFT | wxALIGN_TOP, 10);
 
-
+    auto* progress_bars_sizer = new wxBoxSizer(wxVERTICAL);
     this->progress_bar_panel = new progressBar(test_info_panel, wxSize(500, 100), this->test_starting_data.duration, { {this->test_starting_data.warning_time, wxColor(154, 133, 48)}, {this->test_starting_data.threshold_time, wxColor(255, 40, 40)} });
-    test_info_panel->GetSizer()->Add(this->progress_bar_panel, 0, wxEXPAND | wxALIGN_CENTER, 10);
+    progress_bars_sizer->Add(this->progress_bar_panel, 0, wxEXPAND | wxALIGN_TOP, 7);
+    this->warning_time_progress_bar_panel = new progressBar(test_info_panel, wxSize(500, 45), this->test_starting_data.duration - this->test_starting_data.warning_time, {}, wxColor(154, 133, 48), true);
+    progress_bars_sizer->Add(this->warning_time_progress_bar_panel, 0, wxEXPAND, 7);
+    this->threshold_time_progress_bar_panel = new progressBar(test_info_panel, wxSize(500, 45), this->test_starting_data.duration - this->test_starting_data.threshold_time, {}, wxColor(255, 40, 40), true);
+    progress_bars_sizer->Add(this->threshold_time_progress_bar_panel, 0, wxEXPAND | wxALIGN_BOTTOM, 7);
+    test_info_panel->GetSizer()->Add(progress_bars_sizer,0, wxEXPAND | wxALIGN_CENTER, 10);
 
 
     auto* test_action_sizer = new wxBoxSizer(wxVERTICAL);
@@ -82,6 +87,8 @@ void examFrame::OnTimer(wxTimerEvent &event)
     this->exam_remaining_time--;
 
     this->progress_bar_panel->update(this->test_starting_data.duration - this->exam_remaining_time);
+    this->threshold_time_progress_bar_panel->update(this->test_starting_data.duration - this->exam_remaining_time);
+    this->warning_time_progress_bar_panel->update(this->test_starting_data.duration - this->exam_remaining_time);
     this->exam_timer_display->SetLabel(formatted_exam_time());
 
     // Check if the specific time is reached

@@ -33,6 +33,8 @@ private:
     wxTimer *exam_timer; // resolution = 1 second
     wxStaticText *exam_timer_display;
     progressBar *progress_bar_panel;
+    progressBar *threshold_time_progress_bar_panel;
+    progressBar *warning_time_progress_bar_panel;
     test_info test_starting_data;
     wxString formatted_exam_time(void);
 
