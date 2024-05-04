@@ -29,6 +29,7 @@
     <None Include="src\README.md" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\frames\create_test_frame.cpp" />
     <ClCompile Include="src\others\html_releated_functions.cpp" />
     <ClCompile Include="src\app.cpp" />
     <ClCompile Include="src\frames\exam_frame.cpp" />
@@ -42,9 +43,12 @@
     <ClCompile Include="src\panels\questions_navigation_panel.cpp" />
     <ClCompile Include="src\panels\questions_panel.cpp" />
     <ClCompile Include="src\panels\section_info_panel.cpp" />
+    <ClCompile Include="src\panels\test_creation_from_questions_list_panel.cpp" />
+    <ClCompile Include="src\panels\test_creation_from_questions_options_panel.cpp" />
     <ClCompile Include="src\panels\test_info_panel.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\frames\create_test_frame.h" />
     <ClInclude Include="src\others\html_releated_functions.h" />
     <ClInclude Include="src\app.h" />
     <ClInclude Include="src\data structures\test_starting_info.h" />
@@ -59,6 +63,8 @@
     <ClInclude Include="src\panels\questions_navigation_panel.h" />
     <ClInclude Include="src\panels\questions_panel.h" />
     <ClInclude Include="src\panels\section_info_panel.h" />
+    <ClInclude Include="src\panels\test_creation_from_questions_list_panel.h" />
+    <ClInclude Include="src\panels\test_creation_from_questions_options_panel.h" />
     <ClInclude Include="src\panels\test_info_panel.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

@@ -25,6 +25,9 @@
     <ClCompile Include="src\others\text_input_window.cpp" />
     <ClCompile Include="src\others\html_releated_functions.cpp" />
     <ClCompile Include="src\panels\progress_bar.cpp" />
+    <ClCompile Include="src\frames\create_test_frame.cpp" />
+    <ClCompile Include="src\panels\test_creation_from_questions_list_panel.cpp" />
+    <ClCompile Include="src\panels\test_creation_from_questions_options_panel.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\app.h" />
@@ -42,5 +45,8 @@
     <ClInclude Include="src\others\text_input_window.h" />
     <ClInclude Include="src\others\html_releated_functions.h" />
     <ClInclude Include="src\panels\progress_bar.h" />
+    <ClInclude Include="src\frames\create_test_frame.h" />
+    <ClInclude Include="src\panels\test_creation_from_questions_list_panel.h" />
+    <ClInclude Include="src\panels\test_creation_from_questions_options_panel.h" />
   </ItemGroup>
 </Project>

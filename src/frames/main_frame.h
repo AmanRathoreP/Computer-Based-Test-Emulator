@@ -1,5 +1,6 @@
 #pragma once
 #include "exam_frame.h"
+#include "create_test_frame.h"
 #include "test_starting_info.h"
 #include <wx/wx.h>
 #include <fstream>

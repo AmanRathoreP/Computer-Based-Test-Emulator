@@ -70,8 +70,8 @@ void mainFrame::on_about_author_clicked(wxCommandEvent& event)
 
 void mainFrame::on_create_test_clicked(wxCommandEvent& event)
 {
-    wxMessageBox("The facility will be implemented soon!",
-        "Test Creation", wxOK | wxICON_WARNING);
+    auto *create_test_frame = new testCreateFrame(this);
+    create_test_frame->Show(true);
 }
 
 void mainFrame::on_load_test_clicked(wxCommandEvent &event)
