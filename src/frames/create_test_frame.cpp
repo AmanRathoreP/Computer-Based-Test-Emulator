@@ -12,8 +12,8 @@ testCreateFrame::testCreateFrame(wxFrame *parent) : wxFrame(parent, wxID_ANY, "T
 
     wxBoxSizer *mainSizer = new wxBoxSizer(wxHORIZONTAL);
 
-    mainSizer->Add(this->questions_list, 5, wxEXPAND | wxALL, 10);
-    mainSizer->Add(this->questions_options, 1, wxEXPAND | wxALL, 10);
+    mainSizer->Add(this->questions_list, 1, wxEXPAND | wxALL, 10);
+    mainSizer->Add(this->questions_options, 0, wxEXPAND | wxALL, 10);
 
     SetSizerAndFit(mainSizer);
 }

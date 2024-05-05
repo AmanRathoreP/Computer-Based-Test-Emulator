@@ -344,14 +344,24 @@ __sectionQuestionMapper_row::__sectionQuestionMapper_row(wxWindow *parent, unsig
     this->delete_button->SetToolTip("Delete this row");
     this->delete_button->Bind(wxEVT_BUTTON, &__sectionQuestionMapper_row::OnDelete, this);
 
+    this->clear_button = new wxButton(this, wxID_ANY, "Clear", wxDefaultPosition, wxDefaultSize);
+    this->clear_button->SetToolTip("Clear questions");
+    this->clear_button->Bind(wxEVT_BUTTON, &__sectionQuestionMapper_row::OnClear, this);
+
+    this->question_type = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, this->question_types);
+    this->question_type->SetSelection(0);
+    this->question_type->SetToolTip("Select the type of question");
+
     sizer->Add(this->questions_to_include_input, 0, wxEXPAND | wxALIGN_CENTER_VERTICAL, 2);
     sizer->AddSpacer(4);
     sizer->Add(this->section_name_input, 0, wxEXPAND | wxALIGN_CENTER_VERTICAL, 2);
-    sizer->AddSpacer(10);
+    sizer->AddSpacer(8);
     sizer->Add(this->add_current_selection, 0, wxEXPAND | wxALIGN_CENTER_VERTICAL, 2);
+    sizer->AddSpacer(5);
+    sizer->Add(this->question_type, 0, wxEXPAND | wxALIGN_CENTER_VERTICAL, 2);
     sizer->AddSpacer(2);
+    sizer->Add(this->clear_button, 0, wxEXPAND | wxALIGN_CENTER_VERTICAL | wxALIGN_RIGHT, 2);
     sizer->Add(this->delete_button, 0, wxEXPAND | wxALIGN_CENTER_VERTICAL | wxALIGN_RIGHT, 2);
-
     SetSizer(sizer);
 }
 
@@ -523,4 +533,8 @@ inline wxString questionsOptionsForTestCreation::remove_leading_symbols(const wx
         result = result.Mid(1); // Remove the first character
     }
     return result;
+}
+
+void __sectionQuestionMapper_row::OnClear(wxCommandEvent& event) {
+    this->questions_to_include_input->SetValue("");
 }

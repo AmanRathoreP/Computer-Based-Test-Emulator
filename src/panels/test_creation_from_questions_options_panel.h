@@ -109,13 +109,19 @@ public:
     void set_questions_in_section(const wxString questions) { this->questions_to_include_input->SetValue(questions); }
     wxString get_questions_in_section() { return questions_to_include_input->GetValue(); }
     wxString get_section_name() { return section_name_input->GetValue(); }
+    wxString get_question_type(void) { return  wxArrayString{ "sc", "mc", "in", "fl" }.Item(this->question_type->GetSelection()); };
 
 private:
     wxTextCtrl *questions_to_include_input;
     wxTextCtrl *section_name_input;
     wxButton *delete_button;
+    wxButton *clear_button;
     unsigned short int section_id = 0;
+    wxChoice* question_type;
+    const wxArrayString question_types = {"Single Correct", "Multi Correct", "Integers only", "Float"};
+
 
     void OnDelete(wxCommandEvent& event);
     void OnAddCurrentSelection(wxCommandEvent &event);
+    void OnClear(wxCommandEvent& event);
 };
