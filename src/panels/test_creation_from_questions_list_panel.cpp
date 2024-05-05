@@ -43,3 +43,15 @@ void questionsListForTestCreation::update_data(const rapidcsv::Document doc)
         this->add_row(col1_SO_QN[row], col2_file_name[row], col3_sec_name[row]);
 }
 
+std::vector<unsigned short int> questionsListForTestCreation::get_selected_rows(void)
+{
+    std::vector<unsigned short int> selectedRows;
+    for (unsigned short int row = 0; row < questions_info_grid->GetNumberRows(); row++)
+    {
+        if (questions_info_grid->IsInSelection(row, 0))
+        {
+            selectedRows.push_back(row);
+        }
+    }
+    return selectedRows;
+}
