@@ -192,10 +192,20 @@ void questionsOptionsForTestCreation::OnGenerateButtonClicked(wxCommandEvent &ev
         return;
     }
 
+      for(auto section : section_order_questions_map){
+          if(section.second.size() < 1)
+          {
+              wxLogError(wxString::Format("Section order %d has no question.\nDelete it if you don't want to add any questions to it.", section.first));
+              return;
+          }
+    }
+
+
+
     test_info __test_info;
     __test_info.duration = this->total_time_panel->get_total_time_in_seconds();
-    __test_info.threshold_time = __test_info.duration - this->threshold_time_panel->get_total_time_in_seconds();
-    __test_info.warning_time = __test_info.duration - this->warning_time_panel->get_total_time_in_seconds();
+    __test_info.threshold_time = this->threshold_time_panel->get_total_time_in_seconds() != 0 ? __test_info.duration - this->threshold_time_panel->get_total_time_in_seconds() : 0;
+    __test_info.warning_time = this->warning_time_panel->get_total_time_in_seconds() != 0 ? __test_info.duration - this->warning_time_panel->get_total_time_in_seconds() : 0;
     __test_info.test_name = this->test_name->GetValue().ToStdString();
     __test_info.test_description = this->test_description->GetValue().ToStdString();
     __test_info.number_of_sections = (unsigned int)section_order_questions_section_name_map.size();
@@ -277,7 +287,7 @@ void questionsOptionsForTestCreation::OnGenerateButtonClicked(wxCommandEvent &ev
         if (wxMessageDialog(NULL,
                 "JSON test info file already exists.\nAre you sure you want to override it?",
                 "File already exists!",
-                wxYES_NO | wxICON_QUESTION).ShowModal())
+                wxYES_NO | wxICON_WARNING).ShowModal())
             {
                 std::ofstream outfile(json_file_path);
                 // Check if the file is opened successfully
@@ -299,7 +309,7 @@ void questionsOptionsForTestCreation::OnGenerateButtonClicked(wxCommandEvent &ev
         if (wxMessageDialog(NULL,
             "CSV test questions file already exists.\nAre you sure you want to override it?",
             "File already exists!",
-            wxYES_NO | wxICON_QUESTION).ShowModal())
+            wxYES_NO | wxICON_WARNING).ShowModal())
             csv_data.Save(csv_file_path);
         else
             return;

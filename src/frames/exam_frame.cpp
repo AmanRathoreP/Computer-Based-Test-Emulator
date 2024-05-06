@@ -281,8 +281,14 @@ void inline examFrame::prepare_test_actions_buttons(void) {
 void inline examFrame::finish_test(bool times_up) {
     if (times_up)
         wxMessageBox("Test is submited.", "Time's up!", wxOK | wxICON_INFORMATION);
-    else if (!wxMessageBox("You won't be able to resume test later\nAre you sure you want to end test?", "You sure?", wxYES | wxICON_WARNING))
-        return;
+    else if(wxMessageDialog(
+                NULL,
+                "You won't be able to resume test later\nAre you sure you want to end test?",
+                "You sure?",
+                wxYES_NO | wxICON_WARNING
+            ).ShowModal() == wxID_NO) {
+        return; // User clicked "No", don't finish the test
+    }
 
     std::string html_file_location_with_name = this->test_starting_data.student_test_result_file;
     html_file_location_with_name.replace(html_file_location_with_name.find(".csv"), sizeof(".csv") - 1, ".html");
@@ -291,7 +297,7 @@ void inline examFrame::finish_test(bool times_up) {
     html_file_location_with_name = this->test_starting_data.student_test_result_file;
     html_file_location_with_name.replace(html_file_location_with_name.find(".csv"), sizeof(".csv") - 1, "(Detailed Analysis).html"); 
     htmlGenerator().create_detailed_test_analysis(this->result_doc, html_file_location_with_name, this->test_starting_data);
-
+    
     this->Close(true);
 }
 
