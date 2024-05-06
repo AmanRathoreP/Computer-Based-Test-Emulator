@@ -35,6 +35,7 @@ wxBEGIN_EVENT_TABLE(questionsOptionsForTestCreation, wxPanel)
     this->generate_button = new customButton(this, wxID_ANY, "Generate", false, 23, 23, wxColor(68, 242, 126));
     this->preview_button->Bind(wxEVT_BUTTON, &questionsOptionsForTestCreation::OnPreviewButtonClicked, this);
     this->generate_button->Bind(wxEVT_BUTTON, &questionsOptionsForTestCreation::OnGenerateButtonClicked, this);
+    this->generate_button->Enable(false);
 
     this->test_name = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
     this->test_name->SetHint("Test name...");
@@ -95,18 +96,19 @@ void questionsOptionsForTestCreation::OnPreviewButtonClicked(wxCommandEvent& eve
         GetEventHandler()->ProcessEvent(folder_update_event);
         this->__folder_updated = false;
 
+        this->generate_button->Enable(false);
         return;
     }
 
     // checking wether multiple section have same questions
-    //*std::map<section_order, std::pair<questions, section_name>>;
-    std::map<unsigned short int, std::pair<wxString, wxString>> section_order_questions_section_name_map;
+    // std::map<section_order, {questions, section_name, section_type}>;
+    std::map<unsigned short int, std::array<wxString, 3>> section_order_questions_section_name_map;
     std::map<unsigned short int, std::vector<unsigned short int>> section_order_questions_map;
     section_order_questions_section_name_map = this->section_question_mapper->get_all_data_of_sections();
 
     for (auto &section : section_order_questions_section_name_map)
     {
-        section_order_questions_map.insert(std::make_pair(section.first, this->get_questions_array_from_string(section.second.first, -1)));
+        section_order_questions_map.insert(std::make_pair(section.first, this->get_questions_array_from_string(section.second[0], -1)));
     }
 
     wxString question_section_info = this->is_same_questions_in_multiple_sections(section_order_questions_map);
@@ -127,7 +129,7 @@ void questionsOptionsForTestCreation::OnPreviewButtonClicked(wxCommandEvent& eve
         for (auto question : section_order_questions.second)
         {
             so_qn_column[question] = wxString::Format("%d, %d", section_order_questions.first, question_number++).ToStdString();
-            section_name[question] = section_order_questions_section_name_map[section_order_questions.first].second;
+            section_name[question] = section_order_questions_section_name_map[section_order_questions.first][1];
         }
     }
 
@@ -135,10 +137,173 @@ void questionsOptionsForTestCreation::OnPreviewButtonClicked(wxCommandEvent& eve
     this->question_csv_data.SetColumn<std::string>("Section Name", section_name);
     wxCommandEvent questions_section_event(DATA_UPDATED, GetId());
     GetEventHandler()->ProcessEvent(questions_section_event);
+    this->generate_button->Enable(true);
 }
 
 void questionsOptionsForTestCreation::OnGenerateButtonClicked(wxCommandEvent &event)
 {
+    //todo show warning if files already exist at that location
+
+    if (this->test_name->GetValue().IsEmpty()){
+        wxLogError("Test Name cannot be empty!");
+        return;
+    }
+
+    if (this->warning_time_panel->get_total_time_in_seconds() > this->total_time_panel->get_total_time_in_seconds()) {
+        wxLogError("Warning time must be less than total time");
+        return;
+    }
+    if(this->threshold_time_panel->get_total_time_in_seconds() > this->total_time_panel->get_total_time_in_seconds()){
+        wxLogError("Threshold time must be less than total time");
+        return;
+    }
+    if(this->total_time_panel->get_total_time_in_seconds() <= 1){
+        wxLogError("Total time must be greater than 1");
+        return;
+    }
+
+    //todo allow user to add only specific questions
+    // std::map<section_order, {questions, section_name, section_type}>;
+    std::map<unsigned short int, std::array<wxString, 3>> section_order_questions_section_name_map = this->section_question_mapper->get_all_data_of_sections();
+    
+    unsigned short int total_number_of_questions = 0;
+    for (auto& section : section_order_questions_section_name_map)
+        total_number_of_questions += this->get_questions_array_from_string(section.second[0]).size();
+
+    if(total_number_of_questions < this->question_csv_data.GetRowCount()) {
+        wxLogError("All questions avaliable in the folder are not included :-(");
+        this->generate_button->Enable(false);
+        return;
+    }
+
+    std::map<unsigned short int, std::vector<unsigned short int>> section_order_questions_map;
+    std::map<unsigned short int, unsigned short int> section_order_number_of_questions_map;
+    unsigned short int total_questions = 0;
+
+    for (auto& section : section_order_questions_section_name_map)
+        section_order_questions_map.insert(std::make_pair(section.first, this->get_questions_array_from_string(section.second[0], -1)));
+    for (auto& section : section_order_questions_map)
+        section_order_number_of_questions_map.insert(std::pair<unsigned short int, unsigned short int>(section.first, section.second.size()));
+    for (auto& section : section_order_number_of_questions_map)
+        total_questions += section.second;
+
+    if(total_questions < 1) {
+        wxLogError("Add atleast one question to create test");
+        return;
+    }
+
+    test_info __test_info;
+    __test_info.duration = this->total_time_panel->get_total_time_in_seconds();
+    __test_info.threshold_time = __test_info.duration - this->threshold_time_panel->get_total_time_in_seconds();
+    __test_info.warning_time = __test_info.duration - this->warning_time_panel->get_total_time_in_seconds();
+    __test_info.test_name = this->test_name->GetValue().ToStdString();
+    __test_info.test_description = this->test_description->GetValue().ToStdString();
+    __test_info.number_of_sections = (unsigned int)section_order_questions_section_name_map.size();
+
+    __test_info.sections = new test_section_info[__test_info.number_of_sections];
+    // __test_info.sections[0] = { 25, "Math", 1 };
+    for (auto& section : section_order_number_of_questions_map)
+        __test_info.sections[section.first - 1] = {section.second, section_order_questions_section_name_map[section.first][1].ToStdString(), section.first};
+
+    Json::StreamWriterBuilder writer;
+    std::string json_str = Json::writeString(writer, __test_info.to_json());
+
+    //generating csv of questions
+    std::vector<std::string> question_file_names = this->question_csv_data.GetColumn<std::string>("File Name");
+    std::vector<std::string> section_orders(question_file_names.size(), "NaN");
+    std::vector<std::string> question_numbers(question_file_names.size(), "NaN");
+    std::vector<std::string> question_types(question_file_names.size(), "NaN");
+
+    unsigned short int current_overall_question = 1;
+    for (auto so_q : section_order_questions_map)
+    {
+        for (auto question : so_q.second)
+        {
+            try
+            {
+                std::string row_number = std::to_string(find_row_number(this->question_csv_data, "File Name", question_file_names[current_overall_question - 1]));
+                std::string row_so_q = this->question_csv_data.GetCell<std::string>("SO, QN", std::stoi(row_number));
+                std::string row_so, row_q;
+
+                row_so_q.erase(std::remove_if(row_so_q.begin(), row_so_q.end(), ::isspace), row_so_q.end());
+
+                    std::istringstream iss(row_so_q);
+                    std::getline(iss >> std::ws, row_so, ',') >> std::ws;
+                    std::getline(iss >> std::ws, row_q);
+
+                    section_orders[current_overall_question - 1] = row_so;
+                    question_numbers[current_overall_question - 1] = row_q;
+                    question_types[current_overall_question - 1] = section_order_questions_section_name_map[std::stoi(row_so)][2];
+            }
+            catch (const std::exception &e)
+            {
+                wxString errorMsg(e.what(), wxConvUTF8);
+                wxLogError(errorMsg);
+            }
+            current_overall_question++;
+        }
+    }
+
+    //todo allow user to add only specific questions
+    /*
+    question_file_names = drop_elements_with_specific_vals(question_file_names);
+    section_orders = drop_elements_with_specific_vals(section_orders);
+    question_numbers = drop_elements_with_specific_vals(question_numbers);
+    question_types = drop_elements_with_specific_vals(question_types);
+    */
+
+    rapidcsv::Document csv_data;
+    csv_data.SetColumnName(0, "question_file_name");
+    csv_data.SetColumnName(1, "section_order");
+    csv_data.SetColumnName(2, "question_number");
+    csv_data.SetColumnName(3, "question_type");
+
+    csv_data.SetColumn<std::string>("question_file_name", question_file_names);
+    csv_data.SetColumn<std::string>("section_order", section_orders);
+    csv_data.SetColumn<std::string>("question_number", question_numbers);
+    csv_data.SetColumn<std::string>("question_type", question_types);
+
+
+#ifdef __WXMSW__  // Windows
+    wxChar __path_separator = '\\';
+#else
+    wxChar __path_separator = '/';
+#endif
+
+    auto csv_file_path = (this->folder_path_text->GetValue() + __path_separator + "test_questions.csv").ToStdString();
+    auto json_file_path = (this->folder_path_text->GetValue() + __path_separator + "test_info.json").ToStdString();
+
+    if(does_file_exists(json_file_path)){
+        if (wxMessageDialog(NULL,
+                "JSON test info file already exists.\nAre you sure you want to override it?",
+                "File already exists!",
+                wxYES_NO | wxICON_QUESTION).ShowModal())
+            {
+                std::ofstream outfile(json_file_path);
+                // Check if the file is opened successfully
+                if (!outfile.is_open()) {
+                    std::cerr << "Error opening file!" << std::endl;
+                    return;
+                }
+
+                outfile << json_str << std::endl;
+
+                outfile.close();
+                delete[] __test_info.sections;
+            }
+        else
+            return;
+    }
+    
+    if(does_file_exists(csv_file_path)){
+        if (wxMessageDialog(NULL,
+            "CSV test questions file already exists.\nAre you sure you want to override it?",
+            "File already exists!",
+            wxYES_NO | wxICON_QUESTION).ShowModal())
+            csv_data.Save(csv_file_path);
+        else
+            return;
+    }
 }
 
 void questionsOptionsForTestCreation::OnSelectFolderClicked(wxCommandEvent &event)
@@ -150,6 +315,7 @@ void questionsOptionsForTestCreation::OnSelectFolderClicked(wxCommandEvent &even
         wxString folder_path = dlg.GetPath();
         this->folder_path_text->SetValue(folder_path);
         this->__folder_updated = true;
+        this->generate_button->Enable(false);
     }
 }
 
@@ -378,6 +544,8 @@ void questionsOptionsForTestCreation::extract_question_numbers_from_selection(wx
     wxCommandEvent need_selection_event(NEED_CURRENT_SELECTION, GetId());
     GetEventHandler()->ProcessEvent(need_selection_event);
 
+    this->generate_button->Enable(false);
+
     this->section_question_mapper->update_questions_in_section_info(event.GetInt(), this->format_questions_array_to_string(this->get_questions_array_from_string(remove_leading_symbols(this->format_questions_array_to_string(this->__current_rows_selection_from_questions_list_panel, 1) + "," + event.GetString()))));
 }
 
@@ -488,15 +656,20 @@ void questionsOptionsForTestCreation::try_to_delete_section(wxCommandEvent &even
     this->section_question_mapper->calculate_add_row_button_visibility();
 }
 
-std::map<unsigned short int, std::pair<wxString, wxString>> __sectionQuestionMapper::get_all_data_of_sections(void)
+std::map<unsigned short int, std::array<wxString, 3>> __sectionQuestionMapper::get_all_data_of_sections(void)
 {
-    // std::map<section_order, std::pair<questions, section_name>>;
-    std::map<unsigned short int, std::pair<wxString, wxString>> data;
+    // std::map<section_order, {questions, section_name, section_type}>;
+    std::map<unsigned short int, std::array<wxString, 3>> data;
 
     unsigned short int section_order = 1;
 
     for (auto section : sections)
-        data.insert(std::make_pair(section_order++, std::make_pair<wxString, wxString>(section->get_questions_in_section(), section->get_section_name())));
+    {
+        data.insert(std::make_pair(section_order++, std::array<wxString, 3>{
+                                                        section->get_questions_in_section(),
+                                                        section->get_section_name(),
+                                                        section->get_question_type()}));
+    }
 
     return data;
 }
@@ -537,4 +710,39 @@ inline wxString questionsOptionsForTestCreation::remove_leading_symbols(const wx
 
 void __sectionQuestionMapper_row::OnClear(wxCommandEvent& event) {
     this->questions_to_include_input->SetValue("");
+}
+
+inline unsigned int __timeSelector::get_total_time_in_seconds(void)
+{
+    double val;
+    if (this->total_time_display->GetValue().ToDouble(&val)) {
+        val *= time_multiplier_values_to_convert_into_seconds[choiceBox->GetSelection()];
+        if (val < 1)
+            return 0;
+        return static_cast<unsigned int>(val);
+    }
+    else
+        return 0;
+}
+
+template<typename T> std::vector<T> questionsOptionsForTestCreation::drop_elements_with_specific_vals(std::vector<T> vec, const T& value_to_drop) {
+    std::vector<size_t> indicesToRemove;
+    auto it = vec.begin();
+
+    // Find indices of elements equal to the specified value
+    while ((it = std::find(it, vec.end(), value_to_drop)) != vec.end()) {
+        indicesToRemove.push_back(std::distance(vec.begin(), it++));
+    }
+
+    // Sort indices in descending order
+    std::sort(indicesToRemove.begin(), indicesToRemove.end(), std::greater<size_t>());
+
+    // Remove elements from the vector based on the indices
+    for (size_t index : indicesToRemove) {
+        if (index < vec.size()) {
+            vec.erase(vec.begin() + index);
+        }
+    }
+
+    return vec;
 }

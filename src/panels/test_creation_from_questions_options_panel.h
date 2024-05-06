@@ -1,9 +1,13 @@
 #pragma once
 #include "custom_buttons.h"
+#include "test_starting_info.h"
+#include "basic_csv_functions.h"
 #include <vector>
 #include <algorithm>
 #include <map>
 #include <unordered_set>
+#include <array>
+#include <fstream>
 #include <rapidcsv.h>
 #include <wx/wx.h>
 #include <wx/textctrl.h>
@@ -32,6 +36,9 @@ protected:
     wxString format_questions_array_to_string(std::vector<unsigned short int> vec, short int value_to_add_in_each_element = 0);
     std::vector<unsigned short int> get_questions_array_from_string(wxString str, short int value_to_add_in_each_element = 0);
     inline wxString remove_leading_symbols(const wxString& str, const wxChar symbol = ',');
+    template<typename T> std::vector<T> drop_elements_with_specific_vals(std::vector<T> vec, const T& value_to_drop);
+    inline std::vector<std::string> drop_elements_with_specific_vals(std::vector<std::string> vec, const std::string& value_to_drop = "NaN") { return drop_elements_with_specific_vals<std::string>(vec, value_to_drop); };
+    inline bool does_file_exists(const std::string& file_path_and_name) { wxFileName(file_path_and_name).FileExists(); };
 
 private:
     wxTextCtrl *folder_path_text;
@@ -59,7 +66,7 @@ class __timeSelector : public wxPanel
 {
 public:
     __timeSelector(wxWindow *parent, const wxString label, const wxColor background_color);
-    unsigned int total_time_in_seconds;
+    inline unsigned int get_total_time_in_seconds(void);
 
 protected:
     wxString format_time(unsigned int seconds);
@@ -70,6 +77,7 @@ private:
     wxChoice *choiceBox;
     wxTextCtrl *total_time_display;
     wxStaticText *overall_readable_time_display;
+    unsigned int total_time_in_seconds;
     const unsigned short int time_multiplier_values_to_convert_into_seconds[3] = {1, 60, 3600};
     bool change_total_time_display = true;
 
@@ -84,7 +92,7 @@ public:
     void update_questions_in_section_info(const unsigned short int section_id, const wxString questions);
     void clear_all_questions_in_sections_info(void);
     void drop_row(const unsigned short int section_id);
-    std::map<unsigned short int, std::pair<wxString, wxString>> get_all_data_of_sections(void);
+    std::map<unsigned short int, std::array<wxString, 3>> get_all_data_of_sections(void);
 
 private:
     wxBoxSizer *main_sizer;

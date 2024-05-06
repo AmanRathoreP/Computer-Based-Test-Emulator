@@ -85,3 +85,11 @@ int find_row_number(const rapidcsv::Document& doc, const std::string& column1, c
     // Return -1 if no match is found
     return -1;
 }
+
+unsigned short int find_row_number(const rapidcsv::Document& doc, const std::string& column1, const std::string& value1) {
+    for (int row = 0; row < doc.GetRowCount(); ++row) {
+        if (doc.GetCell<std::string>(column1, row) == value1)
+            return row;
+    }
+    return -1;
+}

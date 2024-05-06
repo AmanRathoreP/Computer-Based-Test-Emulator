@@ -15,6 +15,15 @@ struct test_section_info {
         section_name = json_data.get("section name", "unidentified section").asString();
         priority = json_data.get("section order", 0).asInt();
     }
+
+    Json::Value to_json() const
+    {
+        Json::Value json_data;
+        json_data["number of questions"] = number_of_questions;
+        json_data["section name"] = section_name;
+        json_data["section order"] = priority;
+        return json_data;
+    }
 };
 
 struct test_info {
@@ -41,6 +50,27 @@ struct test_info {
         for (unsigned short int i = 0; i < number_of_sections; ++i) {
             sections[i].from_json(__sections[i]);
         }
+    }
+
+    Json::Value to_json() const
+    {
+        Json::Value json_data;
+        json_data["duration"] = duration;
+        json_data["threshold time"] = threshold_time;
+        json_data["warning time"] = warning_time;
+        json_data["test name"] = test_name;
+        json_data["test description"] = test_description;
+        json_data["total number of sections"] = number_of_sections;
+
+        // Serialize the array of sections
+        Json::Value sections_array(Json::arrayValue);
+        for (unsigned short int i = 0; i < number_of_sections; ++i)
+        {
+            sections_array.append(sections[i].to_json());
+        }
+        json_data["sections"] = sections_array;
+
+        return json_data;
     }
 };
 
