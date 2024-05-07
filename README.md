@@ -10,7 +10,9 @@
 # Features
 
 * Time limitation can be added
-* Multiple themes
+* Custom test creation
+* Multiple Progress Bars
+* Multiple times like for warning, threshold, and test finishing time
 * ...
 
 # Quick start
@@ -29,6 +31,9 @@ We welcome any type of contribution, _not only code_. You can help with:
 - **Code**: Take a look at the [open issues](issues.md). Even if you can't write the code yourself, you can comment on them, showing that you care about a given issue matters. It helps us to handel them
 
 # Demo
+![Test Creation Frame](https://github.com/AmanRathoreP/AmanRathoreP/blob/main/imgs/CBT-Emulator%2C%20test%20create%20frame%201.jpg)
+![Exam Frame](https://github.com/AmanRathoreP/AmanRathoreP/blob/main/imgs/CBT-Emulator%2C%20exam%20frame%201.jpg)
+![Generated test summary in HTML](https://github.com/AmanRathoreP/AmanRathoreP/blob/main/imgs/CBT-Emulator%2C%20generated%20summary%20HTML%201.jpg)
 
 # Author
 
@@ -38,6 +43,8 @@ We welcome any type of contribution, _not only code_. You can help with:
    - Email -> *aman.proj.rel@gmail.com*
 
 # Facts
+* The project was commenced by Aman Rathore (GitHub: [@Aman](https://www.github.com/AmanRathoreP)) in February 2024, following the completion of their JEE Mains Session 1 exam. Its primary objective is to facilitate practice for exam-style questions within an environment akin to that of an exam hall.
+* CBT-Emulator is not designed with the intention of catering to a broad user demographic. Its singular focus lies in acclimatizing users to the examination environment specific to assessments such as JEE, IAT, NEST, and similar examinations.
 
 # License
 
