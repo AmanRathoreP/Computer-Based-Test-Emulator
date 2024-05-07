@@ -153,6 +153,10 @@ void questionsOptionsForTestCreation::OnGenerateButtonClicked(wxCommandEvent &ev
         wxLogError("Warning time must be less than total time");
         return;
     }
+    if (this->warning_time_panel->get_total_time_in_seconds() >= this->threshold_time_panel->get_total_time_in_seconds()) {
+        wxLogError("Warning time must be less than threshold time");
+        return;
+    }
     if(this->threshold_time_panel->get_total_time_in_seconds() > this->total_time_panel->get_total_time_in_seconds()){
         wxLogError("Threshold time must be less than total time");
         return;
@@ -284,15 +288,15 @@ void questionsOptionsForTestCreation::OnGenerateButtonClicked(wxCommandEvent &ev
     auto json_file_path = (this->folder_path_text->GetValue() + __path_separator + "test_info.json").ToStdString();
 
     if(does_file_exists(json_file_path)){
-        if (wxMessageDialog(NULL,
+        if (wxMessageDialog(this->GetParent(),
                 "JSON test info file already exists.\nAre you sure you want to override it?",
                 "File already exists!",
-                wxYES_NO | wxICON_WARNING).ShowModal())
+                wxYES_NO | wxICON_WARNING).ShowModal() == wxID_YES)
             {
                 std::ofstream outfile(json_file_path);
                 // Check if the file is opened successfully
                 if (!outfile.is_open()) {
-                    std::cerr << "Error opening file!" << std::endl;
+                    wxLogError("Error opening file!");
                     return;
                 }
 
@@ -306,10 +310,10 @@ void questionsOptionsForTestCreation::OnGenerateButtonClicked(wxCommandEvent &ev
     }
     
     if(does_file_exists(csv_file_path)){
-        if (wxMessageDialog(NULL,
+        if (wxMessageDialog(this->GetParent(),
             "CSV test questions file already exists.\nAre you sure you want to override it?",
             "File already exists!",
-            wxYES_NO | wxICON_WARNING).ShowModal())
+            wxYES_NO | wxICON_WARNING).ShowModal() == wxID_YES)
             csv_data.Save(csv_file_path);
         else
             return;
