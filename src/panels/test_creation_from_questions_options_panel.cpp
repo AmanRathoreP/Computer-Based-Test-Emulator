@@ -287,37 +287,33 @@ void questionsOptionsForTestCreation::OnGenerateButtonClicked(wxCommandEvent &ev
     auto csv_file_path = (this->folder_path_text->GetValue() + __path_separator + "test_questions.csv").ToStdString();
     auto json_file_path = (this->folder_path_text->GetValue() + __path_separator + "test_info.json").ToStdString();
 
-    if(does_file_exists(json_file_path)){
-        if (wxMessageDialog(this->GetParent(),
-                "JSON test info file already exists.\nAre you sure you want to override it?",
-                "File already exists!",
-                wxYES_NO | wxICON_WARNING).ShowModal() == wxID_YES)
-            {
-                std::ofstream outfile(json_file_path);
-                // Check if the file is opened successfully
-                if (!outfile.is_open()) {
-                    wxLogError("Error opening file!");
-                    return;
-                }
-
-                outfile << json_str << std::endl;
-
-                outfile.close();
-                delete[] __test_info.sections;
-            }
-        else
+    if (does_file_exists(json_file_path) && (wxMessageDialog(this->GetParent(),
+        "JSON test info file already exists.\nAre you sure you want to override it?",
+        "File already exists!",
+        wxYES_NO | wxICON_WARNING).ShowModal() == wxID_NO))
             return;
+        else
+    {
+        std::ofstream outfile(json_file_path);
+        // Check if the file is opened successfully
+        if (!outfile.is_open()) {
+            wxLogError("Error opening file!");
+            return;
+        }
+
+        outfile << json_str << std::endl;
+
+        outfile.close();
+        delete[] __test_info.sections;
     }
     
-    if(does_file_exists(csv_file_path)){
-        if (wxMessageDialog(this->GetParent(),
+    if(does_file_exists(csv_file_path) && (wxMessageDialog(this->GetParent(),
             "CSV test questions file already exists.\nAre you sure you want to override it?",
             "File already exists!",
-            wxYES_NO | wxICON_WARNING).ShowModal() == wxID_YES)
-            csv_data.Save(csv_file_path);
+            wxYES_NO | wxICON_WARNING).ShowModal() == wxID_NO))
+                return;
         else
-            return;
-    }
+            csv_data.Save(csv_file_path);
 }
 
 void questionsOptionsForTestCreation::OnSelectFolderClicked(wxCommandEvent &event)

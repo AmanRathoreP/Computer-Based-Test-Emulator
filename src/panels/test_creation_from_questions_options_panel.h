@@ -38,7 +38,7 @@ protected:
     inline wxString remove_leading_symbols(const wxString& str, const wxChar symbol = ',');
     template<typename T> std::vector<T> drop_elements_with_specific_vals(std::vector<T> vec, const T& value_to_drop);
     inline std::vector<std::string> drop_elements_with_specific_vals(std::vector<std::string> vec, const std::string& value_to_drop = "NaN") { return drop_elements_with_specific_vals<std::string>(vec, value_to_drop); };
-    inline bool does_file_exists(const std::string& file_path_and_name) { wxFileName(file_path_and_name).FileExists(); };
+    inline bool does_file_exists(const std::string& file_path_and_name) { return wxFileName(file_path_and_name).FileExists(); };
 
 private:
     wxTextCtrl *folder_path_text;
