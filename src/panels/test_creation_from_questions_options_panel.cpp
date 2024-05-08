@@ -153,7 +153,7 @@ void questionsOptionsForTestCreation::OnGenerateButtonClicked(wxCommandEvent &ev
         wxLogError("Warning time must be less than total time");
         return;
     }
-    if (this->warning_time_panel->get_total_time_in_seconds() >= this->threshold_time_panel->get_total_time_in_seconds()) {
+    if (this->warning_time_panel->get_total_time_in_seconds() > this->threshold_time_panel->get_total_time_in_seconds()) {
         wxLogError("Warning time must be less than threshold time");
         return;
     }
