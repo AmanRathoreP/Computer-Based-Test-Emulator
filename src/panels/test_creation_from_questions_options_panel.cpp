@@ -36,6 +36,7 @@ wxBEGIN_EVENT_TABLE(questionsOptionsForTestCreation, wxPanel)
     this->preview_button->Bind(wxEVT_BUTTON, &questionsOptionsForTestCreation::OnPreviewButtonClicked, this);
     this->generate_button->Bind(wxEVT_BUTTON, &questionsOptionsForTestCreation::OnGenerateButtonClicked, this);
     this->generate_button->Enable(false);
+    this->preview_button->Enable(false);
 
     this->test_name = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
     this->test_name->SetHint("Test name...");
@@ -326,6 +327,7 @@ void questionsOptionsForTestCreation::OnSelectFolderClicked(wxCommandEvent &even
         this->folder_path_text->SetValue(folder_path);
         this->__folder_updated = true;
         this->generate_button->Enable(false);
+        this->preview_button->Enable(true);
     }
 }
 
