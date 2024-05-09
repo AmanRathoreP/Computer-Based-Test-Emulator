@@ -7,6 +7,8 @@ wxEND_EVENT_TABLE()
 
 testCreateFrame::testCreateFrame(wxFrame *parent) : wxFrame(parent, wxID_ANY, "Test creation window", wxDefaultPosition, wxGetDisplaySize(), wxDEFAULT_FRAME_STYLE)
 {
+    SetIcon(wxIcon(create_icon));
+
     this->questions_options = new questionsOptionsForTestCreation(this);
     this->questions_list = new questionsListForTestCreation(this);
 

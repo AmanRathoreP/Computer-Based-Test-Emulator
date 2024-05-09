@@ -1,6 +1,8 @@
 #include "main_frame.h"
 
 mainFrame::mainFrame(const wxString& title) : wxFrame(nullptr, wxID_ANY, title) {
+    SetIcon(app_icon);
+
     wxMenu* menu_advance = new wxMenu;
     menu_advance->Append(ID_load_test, "&Load Test\tCtrl+L");
     menu_advance->Append(ID_resume_test, "&Resume Test\tCtrl+H");

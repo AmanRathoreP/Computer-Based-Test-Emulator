@@ -506,11 +506,11 @@ __sectionQuestionMapper_row::__sectionQuestionMapper_row(wxWindow *parent, unsig
     this->add_current_selection->SetToolTip("Add current selections in questions");
     this->add_current_selection->Bind(wxEVT_BUTTON, &__sectionQuestionMapper_row::OnAddCurrentSelection, this);
 
-    this->delete_button = new wxButton(this, wxID_ANY, "X", wxDefaultPosition, wxSize(18, -1));
+    this->delete_button = new wxBitmapButton(this, wxID_ANY, delete_icon, wxDefaultPosition, wxSize(-1, 25));
     this->delete_button->SetToolTip("Delete this row");
     this->delete_button->Bind(wxEVT_BUTTON, &__sectionQuestionMapper_row::OnDelete, this);
 
-    this->clear_button = new wxButton(this, wxID_ANY, "Clear", wxDefaultPosition, wxDefaultSize);
+    this->clear_button = new wxBitmapButton(this, wxID_ANY, clear_icon, wxDefaultPosition, wxSize(-1, 12));
     this->clear_button->SetToolTip("Clear questions");
     this->clear_button->Bind(wxEVT_BUTTON, &__sectionQuestionMapper_row::OnClear, this);
 

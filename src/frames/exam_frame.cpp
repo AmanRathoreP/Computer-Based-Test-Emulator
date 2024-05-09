@@ -9,6 +9,8 @@ wxBEGIN_EVENT_TABLE(examFrame, wxFrame)
 
                 examFrame::examFrame(test_info &test_starting_data) : test_starting_data(test_starting_data), wxFrame(NULL, wxID_ANY, wxEmptyString, wxDefaultPosition, wxGetDisplaySize(), wxDEFAULT_FRAME_STYLE)
 {
+    SetIcon(app_icon);
+
     SetWindowStyle(GetWindowStyle() | wxFRAME_NO_TASKBAR);
 
     this->result_doc = rapidcsv::Document(this->test_starting_data.student_test_result_file);

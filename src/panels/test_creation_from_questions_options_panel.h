@@ -3,6 +3,7 @@
 #include "test_starting_info.h"
 #include "basic_csv_functions.h"
 #include "basic_functions.h"
+#include "../constants/graphics/buttons_icon.h"
 #include <vector>
 #include <algorithm>
 #include <map>
@@ -123,8 +124,8 @@ public:
 private:
     wxTextCtrl *questions_to_include_input;
     wxTextCtrl *section_name_input;
-    wxButton *delete_button;
-    wxButton *clear_button;
+    wxBitmapButton *delete_button;
+    wxBitmapButton *clear_button;
     unsigned short int section_id = 0;
     wxChoice* question_type;
     const wxArrayString question_types = {"Single Correct", "Multi Correct", "Integers only", "Float"};

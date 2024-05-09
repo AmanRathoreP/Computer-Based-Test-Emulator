@@ -6,6 +6,7 @@
 #include "./../panels/questions_navigation_panel.h"
 #include "./../panels/section_info_panel.h"
 #include "./../panels/test_info_panel.h"
+#include "../constants/graphics/app_icons.h"
 #include "html_releated_functions.h"
 #include "basic_functions.h"
 #include <wx/wx.h>

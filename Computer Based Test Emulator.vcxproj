@@ -49,6 +49,10 @@
     <ClCompile Include="src\panels\test_info_panel.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="src\constants\graphics\app_icons.h" />
+    <ClInclude Include="src\constants\graphics\buttons_icon.h" />
+    <ClInclude Include="src\constants\graphics\frame_icons.h" />
     <ClInclude Include="src\frames\create_test_frame.h" />
     <ClInclude Include="src\others\basic_functions.h" />
     <ClInclude Include="src\others\html_releated_functions.h" />
@@ -68,6 +72,12 @@
     <ClInclude Include="src\panels\test_creation_from_questions_list_panel.h" />
     <ClInclude Include="src\panels\test_creation_from_questions_options_panel.h" />
     <ClInclude Include="src\panels\test_info_panel.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Computer Based Test Emulator.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="resources\graphics\icons\app.ico" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
