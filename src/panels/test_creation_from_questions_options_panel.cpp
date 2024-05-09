@@ -432,18 +432,6 @@ void __timeSelector::OnQuestionTimeTextBoxChange(wxCommandEvent &event)
     total_time_display->SetToolTip("Enter Valid values");
 }
 
-wxString __timeSelector::format_time(unsigned int seconds)
-{
-    if (seconds < 60)
-        return wxString::Format("%02d secs", seconds);
-    else if (seconds < 3600)
-        return wxString::Format("%02d:%02d", seconds / 60, seconds % 60);
-    else if (seconds < 3600 * 24)
-        return wxString::Format("%02d:%02d:%02d", seconds / 3600, (seconds / 60) % 60, seconds % 60);
-
-    return wxString::Format("%04d:%02d:%02d", seconds / 3600, (seconds / 60) % 60, seconds % 60);
-}
-
 __sectionQuestionMapper::__sectionQuestionMapper(wxWindow *parent) : wxPanel(parent, wxID_ANY)
 {
     this->SetBackgroundColour(wxColor(178, 99, 235));

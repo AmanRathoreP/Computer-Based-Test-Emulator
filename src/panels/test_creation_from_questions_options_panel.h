@@ -2,6 +2,7 @@
 #include "custom_buttons.h"
 #include "test_starting_info.h"
 #include "basic_csv_functions.h"
+#include "basic_functions.h"
 #include <vector>
 #include <algorithm>
 #include <map>
@@ -69,7 +70,7 @@ public:
     inline unsigned int get_total_time_in_seconds(void);
 
 protected:
-    wxString format_time(unsigned int seconds);
+    inline wxString format_time(unsigned int seconds) { return wxString(format_time_from_seconds(seconds)); };
 
 private:
     wxTextCtrl *leftTextBox;

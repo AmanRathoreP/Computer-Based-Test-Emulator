@@ -7,6 +7,7 @@
 #include "./../panels/section_info_panel.h"
 #include "./../panels/test_info_panel.h"
 #include "html_releated_functions.h"
+#include "basic_functions.h"
 #include <wx/wx.h>
 #include <wx/gbsizer.h>
 #include <string>
@@ -36,7 +37,7 @@ private:
     progressBar *threshold_time_progress_bar_panel;
     progressBar *warning_time_progress_bar_panel;
     test_info test_starting_data;
-    wxString formatted_exam_time(void);
+    inline wxString formatted_exam_time(void) { return wxString(format_time_from_seconds(this->exam_remaining_time)); };
 
     void on_question_navigated(wxCommandEvent &event);
     void on_section_navigated(wxCommandEvent &event);

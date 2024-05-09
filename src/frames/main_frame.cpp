@@ -190,7 +190,7 @@ std::string mainFrame::generate_html_to_display_test_info()
 
     // Display test information
     __html_stream << "<h1>" << this->test_starting_data.test_name << "</h1>";
-    __html_stream << "<p>Duration: " << this->test_starting_data.duration/60 << " minutes</p>";
+    __html_stream << "<p>Duration: " << format_time_from_seconds(this->test_starting_data.duration) << "</p>";
     unsigned short int __total_questions = 0;
     for (unsigned short int i = 0; i < this->test_starting_data.number_of_sections; ++i) {
         __total_questions += this->test_starting_data.sections[i].number_of_questions;

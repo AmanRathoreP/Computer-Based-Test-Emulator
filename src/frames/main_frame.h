@@ -3,6 +3,7 @@
 #include "create_test_frame.h"
 #include "test_starting_info.h"
 #include <wx/wx.h>
+#include "basic_functions.h"
 #include <fstream>
 #include <json/json.h>
 #include <wx/html/htmlwin.h>

@@ -30,6 +30,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\frames\create_test_frame.cpp" />
+    <ClCompile Include="src\others\basic_functions.cpp" />
     <ClCompile Include="src\others\html_releated_functions.cpp" />
     <ClCompile Include="src\app.cpp" />
     <ClCompile Include="src\frames\exam_frame.cpp" />
@@ -49,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\frames\create_test_frame.h" />
+    <ClInclude Include="src\others\basic_functions.h" />
     <ClInclude Include="src\others\html_releated_functions.h" />
     <ClInclude Include="src\app.h" />
     <ClInclude Include="src\data structures\test_starting_info.h" />
@@ -146,6 +148,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\include\msvc;include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -162,6 +165,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\include\msvc;include;$(VCPKG)\installed\x64-windows\include;src\data structures;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -178,6 +182,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\include\msvc;include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -194,6 +199,7 @@
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(WXWIN)\include;$(WXWIN)\include\msvc;include;$(VCPKG)\installed\x64-windows\include;src\data structures;src\others;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

@@ -111,23 +111,6 @@ void examFrame::OnTimer(wxTimerEvent &event)
     }
 }
 
-wxString examFrame::formatted_exam_time(void)
-{
-    if (this->exam_remaining_time <= 60 * 10)
-    {
-        return wxString::Format("%01d:%02d", this->exam_remaining_time / 60, this->exam_remaining_time % 60);
-    }
-    else if (this->exam_remaining_time <= 3600)
-    {
-        return wxString::Format("%02d:%02d", this->exam_remaining_time / 60, this->exam_remaining_time % 60);
-    }
-    else if (this->exam_remaining_time <= 3600 * 24)
-    {
-        return wxString::Format("%03d:%02d", this->exam_remaining_time / 60, this->exam_remaining_time % 60);
-    }
-    return wxString::Format("%04d:%02d", this->exam_remaining_time / 60, this->exam_remaining_time % 60);
-}
-
 void examFrame::on_question_navigated(wxCommandEvent &event)
 {
 
