@@ -5,7 +5,7 @@ resultCreateFrame::resultCreateFrame(wxFrame *parent, const wxString test_locati
     if (this->dirty_path())
         return;
 
-    SetIcon(wxIcon(create_icon));
+    SetIcon(wxIcon(generate_icon));
     SetBackgroundColour(wxColor(184, 182, 152));
 
 #ifdef __WXMSW__  // Windows

@@ -32,6 +32,7 @@ questionsListForResultCreation::questionsListForResultCreation(wxWindow *parent,
 
     wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
 
+    wxProgressDialog dialog("Preparing window", "Progress", 100, parent, wxPD_APP_MODAL | wxPD_AUTO_HIDE);
     for (int row = 0; row < questions_csv.GetRowCount(); row++) {
         std::vector<std::string>current_row = this->questions_csv.GetRow<std::string>(row);
         
@@ -48,6 +49,8 @@ questionsListForResultCreation::questionsListForResultCreation(wxWindow *parent,
         
         questions_row.push_back(question_row);
         sizer->Add(question_row, 0, wxEXPAND | wxALL, 15);
+
+        dialog.Update((row * 100) / questions_csv.GetRowCount(), wxString::Format("%d of %d done", row, questions_csv.GetRowCount()));
     }
 
     SetSizer(sizer);

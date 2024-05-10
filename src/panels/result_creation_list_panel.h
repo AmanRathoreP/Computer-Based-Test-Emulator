@@ -2,6 +2,7 @@
 #include "basic_csv_functions.h"
 #include <rapidcsv.h>
 #include <wx/wx.h>
+#include <wx/progdlg.h>
 #include <map>
 
 #define SPLITTER "\\//`//\\"
