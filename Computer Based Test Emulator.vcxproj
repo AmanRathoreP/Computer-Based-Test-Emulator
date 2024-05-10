@@ -29,6 +29,7 @@
     <None Include="src\README.md" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\frames\create_result_frame.cpp" />
     <ClCompile Include="src\frames\create_test_frame.cpp" />
     <ClCompile Include="src\others\basic_functions.cpp" />
     <ClCompile Include="src\others\html_releated_functions.cpp" />
@@ -43,6 +44,7 @@
     <ClCompile Include="src\panels\progress_bar.cpp" />
     <ClCompile Include="src\panels\questions_navigation_panel.cpp" />
     <ClCompile Include="src\panels\questions_panel.cpp" />
+    <ClCompile Include="src\panels\result_creation_list_panel.cpp" />
     <ClCompile Include="src\panels\section_info_panel.cpp" />
     <ClCompile Include="src\panels\test_creation_from_questions_list_panel.cpp" />
     <ClCompile Include="src\panels\test_creation_from_questions_options_panel.cpp" />
@@ -53,6 +55,7 @@
     <ClInclude Include="src\constants\graphics\app_icons.h" />
     <ClInclude Include="src\constants\graphics\buttons_icon.h" />
     <ClInclude Include="src\constants\graphics\frame_icons.h" />
+    <ClInclude Include="src\frames\create_result_frame.h" />
     <ClInclude Include="src\frames\create_test_frame.h" />
     <ClInclude Include="src\others\basic_functions.h" />
     <ClInclude Include="src\others\html_releated_functions.h" />
@@ -68,6 +71,7 @@
     <ClInclude Include="src\panels\progress_bar.h" />
     <ClInclude Include="src\panels\questions_navigation_panel.h" />
     <ClInclude Include="src\panels\questions_panel.h" />
+    <ClInclude Include="src\panels\result_creation_list_panel.h" />
     <ClInclude Include="src\panels\section_info_panel.h" />
     <ClInclude Include="src\panels\test_creation_from_questions_list_panel.h" />
     <ClInclude Include="src\panels\test_creation_from_questions_options_panel.h" />

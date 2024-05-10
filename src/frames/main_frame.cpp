@@ -8,6 +8,8 @@ mainFrame::mainFrame(const wxString& title) : wxFrame(nullptr, wxID_ANY, title) 
     menu_advance->Append(ID_resume_test, "&Resume Test\tCtrl+H");
     menu_advance->Append(ID_create_test, "&Create Test\tCtrl+N");
     menu_advance->AppendSeparator();
+    menu_advance->Append(ID_create_result, "&Create Validity Report\tCtrl+R");
+    menu_advance->AppendSeparator();
     menu_advance->Append(wxID_EXIT, "&Close\tCtrl+W");
 
     wxMenu* menu_help = new wxMenu;
@@ -50,6 +52,7 @@ mainFrame::mainFrame(const wxString& title) : wxFrame(nullptr, wxID_ANY, title) 
     Bind(wxEVT_MENU, &mainFrame::on_create_test_clicked, this, ID_create_test);
     Bind(wxEVT_MENU, &mainFrame::on_load_test_clicked, this, ID_load_test);
     Bind(wxEVT_MENU, &mainFrame::on_resume_test_clicked, this, ID_resume_test);
+    Bind(wxEVT_MENU, &mainFrame::on_create_result_clicked, this, ID_create_result);
     this->start_test_button->Bind(wxEVT_BUTTON, &mainFrame::on_start_test_clicked, this);
 }
 
@@ -276,4 +279,20 @@ void mainFrame::on_resume_test_clicked(wxCommandEvent& event)
 {
     wxMessageBox("The facility will be implemented soon!",
         "No Feature Found", wxOK | wxICON_ERROR);
+}
+
+void mainFrame::on_create_result_clicked(wxCommandEvent& event)
+{
+    wxDirDialog dlg(this, "Choose folder with result csv along with questions in it!", "", wxDD_DEFAULT_STYLE | wxDD_DIR_MUST_EXIST);
+    if (dlg.ShowModal() == wxID_OK)
+    {
+        resultCreateFrame* create_result_frame = new resultCreateFrame(this, dlg.GetPath());
+
+        if (create_result_frame->dirty_path())
+        {
+            wxMessageBox("Crucial file(s) to create validity report is/are missing!\nPlease contact the test provider for more info.", "Error", wxOK | wxICON_ERROR, this);
+            return;
+        }
+        create_result_frame->Show(true);
+    }
 }
