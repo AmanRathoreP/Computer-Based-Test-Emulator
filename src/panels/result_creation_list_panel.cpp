@@ -130,3 +130,27 @@ void questionsListForResultCreation::update_real_answer(wxCommandEvent& event){
         this->questions_csv.SetCell<std::string>(8, row, "0");
 
 };
+
+bool questionsListForResultCreation::dirty_answers(void) {
+    for (questionsListForResultCreation_row* q_row : this->questions_row)
+    {
+        if (q_row->answer_chosen() == false)
+            return true;
+    }
+    return false;
+}
+
+bool questionsListForResultCreation_row::answer_chosen(void) {
+    if(this->question_data.type == "sc")
+        if(this->answer_sc->GetSelection() == wxNOT_FOUND)
+            return false;
+    if(this->question_data.type == "in" || this->question_data.type == "fl")
+        {
+            std::string answer = this->answer_fl_in->GetValue().ToStdString();
+            answer.erase(std::remove_if(answer.begin(), answer.end(), [](char c) { return std::isspace(c); }), answer.end()); //removing spaces
+            if (answer.compare("") == 0)
+                return false;
+        }
+        
+    return true;
+}

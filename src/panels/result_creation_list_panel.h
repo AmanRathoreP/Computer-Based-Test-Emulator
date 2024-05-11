@@ -14,6 +14,7 @@ class questionsListForResultCreation : public wxScrolled<wxPanel>
 public:
     questionsListForResultCreation(wxWindow *, rapidcsv::Document questions_csv);
     rapidcsv::Document get_csv(void) { return this->questions_csv; };
+    bool dirty_answers(void);
 
 private:
     rapidcsv::Document questions_csv;
@@ -40,6 +41,7 @@ public:
         std::string actual_answer;
     };
     questionsListForResultCreation_row(wxWindow *, questionData question_data);
+    bool answer_chosen(void);
 
 private:
     questionData question_data;

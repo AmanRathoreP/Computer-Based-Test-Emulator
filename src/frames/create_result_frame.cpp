@@ -20,6 +20,14 @@ resultCreateFrame::resultCreateFrame(wxFrame *parent, const wxString test_locati
     this->questions_list = new questionsListForResultCreation(this, rapidcsv::Document((this->path + __path_separator + this->result_csv_file_name).ToStdString(), rapidcsv::LabelParams(0, -1)));
     this->generate_button = new customButton(this, wxID_ANY, "Generate Result", false, 23, 23, wxColor(68, 242, 126));
     this->generate_button->Bind(wxEVT_BUTTON, [this](wxCommandEvent& event) {
+        if (this->questions_list->dirty_answers())
+        {
+            wxMessageDialog(this->GetParent(),
+                "You'll need to write correct answer for every answer in order to create validity files!",
+                "Empty answer(s)!",
+                wxICON_WARNING).ShowModal();
+            return;
+        }
         if (wxFileName(this->validity_report_csv_file_path).FileExists() && (wxMessageDialog(this->GetParent(),
             "CSV of validity report of questions already exists.\nAre you sure you want to override it?",
             "File already exists!",
