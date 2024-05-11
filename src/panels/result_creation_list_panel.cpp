@@ -25,6 +25,7 @@ questionsListForResultCreation::questionsListForResultCreation(wxWindow *parent,
     : wxScrolled<wxPanel>(parent, wxID_ANY), questions_csv(questions_csv)
 {
     this->questions_csv.InsertColumn<std::string>(this->questions_csv.GetColumnCount(), std::vector<std::string>(questions_csv.GetRowCount(), "NaN"), "real_answer");
+    this->questions_csv.InsertColumn<std::string>(this->questions_csv.GetColumnCount(), std::vector<std::string>(questions_csv.GetRowCount(), "NaN"), "validity");
 
     this->SetMinSize(wxSize(500, 700));
     this->SetBackgroundColour(wxColor(116, 151, 219));
@@ -112,5 +113,20 @@ questionsListForResultCreation_row::questionsListForResultCreation_row(wxWindow 
 void questionsListForResultCreation::update_real_answer(wxCommandEvent& event){ 
     auto str = event.GetString().ToStdString();
     size_t pos = str.find(std::string(SPLITTER));
-    this->questions_csv.SetCell<std::string>(7, find_row_number(this->questions_csv, "question_file_name", str.substr(0, pos)), str.substr(pos + std::string(SPLITTER).length()));
+    auto row = find_row_number(this->questions_csv, "question_file_name", str.substr(0, pos));
+    auto real_answer = str.substr(pos + std::string(SPLITTER).length());
+    real_answer.erase(std::remove_if(real_answer.begin(), real_answer.end(), [](char c) { return std::isspace(c); }), real_answer.end()); //removing spaces
+    
+    this->questions_csv.SetCell<std::string>(7, row, real_answer);
+
+    auto user_answer = this->questions_csv.GetCell<std::string>(6, row);
+
+    if (user_answer == "NaN")
+        this->questions_csv.SetCell<std::string>(8, row, "NaN");
+    else if (user_answer.find(real_answer) != std::string::npos)
+        //answer is correct
+        this->questions_csv.SetCell<std::string>(8, row, "1");
+    else
+        this->questions_csv.SetCell<std::string>(8, row, "0");
+
 };

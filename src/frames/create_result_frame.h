@@ -1,5 +1,6 @@
 #pragma once
 #include "custom_buttons.h"
+#include "html_releated_functions.h"
 #include "../constants/graphics/frame_icons.h"
 #include "./../panels/result_creation_list_panel.h"
 #include <wx/wx.h>

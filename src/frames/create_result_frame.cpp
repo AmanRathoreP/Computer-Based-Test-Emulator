@@ -15,7 +15,7 @@ resultCreateFrame::resultCreateFrame(wxFrame *parent, const wxString test_locati
 #endif
     
     this->validity_report_csv_file_path = this->result_csv_file_name;
-    this->validity_report_csv_file_path.Replace(" result, ", " validity report, ");
+    this->validity_report_csv_file_path.Replace(" result, ", " Validity Report, ");
     this->validity_report_csv_file_path = this->path + __path_separator + this->validity_report_csv_file_path;
     this->questions_list = new questionsListForResultCreation(this, rapidcsv::Document((this->path + __path_separator + this->result_csv_file_name).ToStdString(), rapidcsv::LabelParams(0, -1)));
     this->generate_button = new customButton(this, wxID_ANY, "Generate Result", false, 23, 23, wxColor(68, 242, 126));
@@ -26,7 +26,18 @@ resultCreateFrame::resultCreateFrame(wxFrame *parent, const wxString test_locati
             wxYES_NO | wxICON_WARNING).ShowModal() == wxID_NO))
             return;
         else
+        {
             this->questions_list->get_csv().Save(this->validity_report_csv_file_path.ToStdString());
+
+            auto str = this->result_csv_file_name;
+            str.Replace(" result, ", " Validity Summary, ");
+            str.Replace(".csv", ".html");
+            htmlGenerator().create_summary_validity_report(this->questions_list->get_csv(), str.ToStdString(), this->path.ToStdString(), 4.0, -1.0);
+            str = this->result_csv_file_name;
+            str.Replace(" result, ", " Validity Detailed Report, ");
+            str.Replace(".csv", ".html");
+            htmlGenerator().create_detailed_validity_report(this->questions_list->get_csv(), str.ToStdString(), this->path.ToStdString());
+        }
         });
 
     wxBoxSizer *mainSizer = new wxBoxSizer(wxVERTICAL);
